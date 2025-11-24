@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Loan History - Nexa Bank</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f7fb;
+            color: #0d1b3d;
+        }
+
+        .top-bar {
+            background: #0d1b3d;
+            padding: 15px 40px;
+            color: #f7d65b;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .top-bar h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .back-btn {
+            background: #f7d65b;
+            padding: 10px 20px;
+            color: #0d1b3d;
+            border-radius: 8px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .container {
+            width: 90%;
+            margin: 30px auto;
+        }
+
+        .title {
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1d3a73;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        thead {
+            background: #1d3a73;
+            color: white;
+        }
+
+        thead th {
+            padding: 15px;
+            text-align: left;
+        }
+
+        tbody td {
+            padding: 14px;
+            border-bottom: 1px solid #dce2f0;
+        }
+
+        /* STATUS BADGES */
+        .badge {
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .pending {
+            background: #f7d65b;
+            color: #0d1b3d;
+        }
+
+        .approved {
+            background: #16c784;
+            color: white;
+        }
+
+        .disbursed {
+            background: #16c784;
+            color: white;
+        }
+
+        .rejected {
+            background: #ff4d4d;
+            color: white;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="top-bar">
+    <h1>Loan History</h1>
+    <a th:href="@{'/dashboard'(accountNumber=${accountNumber})}" class="back-btn">← Dashboard</a>
+</div>
+
+<div class="container">
+    <div class="title">Your Loan Applications</div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Loan Type</th>
+            <th>Amount</th>
+            <th>Tenure</th>
+            <th>Interest</th>
+            <th>EMI</th>
+            <th>Status</th>
+            <th>Remark</th>
+            <th>Applied On</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="loan : ${loanHistory}">
+            <td th:text="${loan.loanType}"></td>
+            <td>₹<span th:text="${loan.amount}"></span></td>
+            <td th:text="${loan.tenure} + ' months'"></td>
+            <td th:text="${loan.interestRate} + '%'"></td>
+            <td>₹<span th:text="${loan.emiAmount}"></span></td>
+
+            <!-- STATUS BADGE -->
+            <td>
+    <span th:class="'badge ' +
+        (${#strings.equalsIgnoreCase(loan.status, 'PENDING')}   ? 'pending' :
+        (${#strings.equalsIgnoreCase(loan.status, 'APPROVED')}  ? 'approved' :
+        (${#strings.equalsIgnoreCase(loan.status, 'DISBURSED')} ? 'disbursed' :
+        (${#strings.equalsIgnoreCase(loan.status, 'REJECTED')}  ? 'rejected' : 'rejected'))))">
+
+        <span th:text="${loan.status}"></span>
+    </span>
+            </td>
+
+            <td th:text="${loan.remark != null ? loan.remark : '—'}"></td>
+            <td th:text="${loan.createdAt}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>

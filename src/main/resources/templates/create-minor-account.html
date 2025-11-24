@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Open Minor Account - Nexa Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        body {
+            background: linear-gradient(to right,#0d1b3d,#1d3a73);
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+            font-family:Segoe UI,sans-serif;
+            color:#0d1b3d;
+            margin:0;
+        }
+
+        .box {
+            background:#fff;
+            padding:35px;
+            border-radius:15px;
+            width:500px;
+            box-shadow:0px 0px 30px rgba(255,215,0,0.3);
+        }
+
+        input, select {
+            width:100%;
+            padding:12px;
+            margin-top:14px;
+            border-radius:8px;
+            border:1px solid #aaa;
+            font-size:15px;
+        }
+
+        button {
+            width:100%;
+            margin-top:22px;
+            padding:14px;
+            background:#f7d65b;
+            border:0;
+            border-radius:8px;
+            font-size:18px;
+            font-weight:600;
+            cursor:pointer;
+        }
+
+        .pin-wrapper { position:relative; }
+
+        .toggle-eye {
+            position:absolute;
+            right:12px;
+            top:50%;
+            transform:translateY(-50%);
+            cursor:pointer;
+            font-size:18px;
+            color:#555;
+        }
+
+        .error-msg {
+            color:red;
+            margin-top:10px;
+            text-align:center;
+            font-size:15px;
+            display:none;
+        }
+        input, select {
+    width: 100%;
+    padding: 12px;
+    margin-top: 14px;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+    font-size: 15px;
+    height: 48px;     /* 🔥 Ensures equal height for input + select */
+    box-sizing: border-box;
+}
+
+    </style>
+</head>
+
+<body>
+<div class="box">
+    <h2 style="text-align:center;font-size:28px;font-weight:700;">Open Minor Account</h2>
+
+    <form th:action="@{/minor/step1}" th:object="${account}" method="post" onsubmit="return validateAge()">
+
+        <input type="text" th:field="*{holderName}" placeholder="Minor Full Name"
+               required pattern="[A-Za-z ]+" title="Only letters allowed">
+
+        <input type="email" th:field="*{email}" placeholder="Minor Email" required>
+
+        <input type="text" th:field="*{phoneNumber}" placeholder="Minor Phone Number"
+               required pattern="[0-9]{10}" maxlength="10" title="Enter 10 digits">
+
+        <input type="date" th:field="*{dob}" id="dob" required>
+
+        <!-- ✅ GENDER FIELD -->
+        <select th:field="*{gender}" required>
+            <option value="" disabled selected>Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Others">Others</option>
+        </select>
+
+        <!-- ✅ ADDRESS FIELD -->
+        <input type="text" th:field="*{address}" placeholder="Minor Address"
+               required minlength="5" maxlength="200"
+               title="Enter a valid address (min 5 characters)">
+
+        <!-- ✅ AADHAR FIELD (12 digits only) -->
+        <input type="text" th:field="*{aadharNumber}" placeholder="Minor Aadhar Number"
+               required pattern="[0-9]{12}" maxlength="12"
+               title="Enter 12-digit Aadhar number only (no spaces or letters)">
+
+        <!-- PIN -->
+        <div class="pin-wrapper">
+            <input type="password" id="pinInput" th:field="*{pin}"
+                   placeholder="Set 4-digit PIN" required pattern="[0-9]{4}"
+                   maxlength="4" title="Enter 4 digits only">
+            <i class="fa-solid fa-eye-slash toggle-eye" id="togglePinIcon" onclick="togglePin()"></i>
+        </div>
+
+        <button type="submit">Link to Parent / Guardian</button>
+
+        <div class="error-msg" id="ageError">
+            Age must be below 18 to open a Minor Account.
+        </div>
+
+    </form>
+</div>
+
+<script>
+    function togglePin(){
+        let pin = document.getElementById("pinInput");
+        let icon = document.getElementById("togglePinIcon");
+
+        if(pin.type === "password"){
+            pin.type = "text";
+            icon.classList.replace("fa-eye-slash","fa-eye");
+        } else {
+            pin.type = "password";
+            icon.classList.replace("fa-eye","fa-eye-slash");
+        }
+    }
+
+    // AGE VALIDATION
+    function validateAge() {
+        let dob = document.getElementById("dob").value;
+        let error = document.getElementById("ageError");
+
+        if (!dob) return false;
+
+        let birthDate = new Date(dob);
+        let today = new Date();
+
+        let age = today.getFullYear() - birthDate.getFullYear();
+        let monthDiff = today.getMonth() - birthDate.getMonth();
+
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+
+        if (age >= 18) {
+            error.style.display = "block";
+            return false;
+        }
+
+        error.style.display = "none";
+        return true;
+    }
+</script>
+
+</body>
+</html>

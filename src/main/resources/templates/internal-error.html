@@ -1,0 +1,15 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>Internal Server Error (dev)</title>
+    <style>body{font-family:Arial;padding:24px}pre{white-space:pre-wrap;background:#f7f7f7;padding:12px;border-radius:6px;overflow:auto}</style>
+</head>
+<body>
+<h1>Internal Server Error (dev)</h1>
+<p><strong>Exception:</strong> <span th:utext="${errorMessage}">error</span></p>
+<h3>Stacktrace</h3>
+<pre th:utext="${errorStack}"></pre>
+<p><a href="/">Back</a></p>
+</body>
+</html>

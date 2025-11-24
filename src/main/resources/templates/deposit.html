@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Deposit Money - Nexa Bank</title>
+
+    <!-- SUCCESS SOUND -->
+    <audio id="successSound">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3" type="audio/mpeg">
+    </audio>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f7fc;
+        }
+
+        .navbar {
+            background-color: #0d1b3d;
+            color: #f7d65b;
+            padding: 20px 40px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 45%;
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #0d1b3d;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #6d7b99;
+            font-size: 15px;
+            margin-bottom: 25px;
+        }
+
+        input {
+            width: 95%;
+            padding: 14px;
+            border: 2px solid #cfd5e3;
+            border-radius: 8px;
+            margin-top: 8px;
+            font-size: 16px;
+        }
+
+        input:focus {
+            border-color: #0d1b3d;
+        }
+
+        .processing-box {
+            display: none;
+            margin-top: 25px;
+            background: #fff7d1;
+            border-left: 5px solid #e6b800;
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 17px;
+            color: #826300;
+        }
+
+        .success-box {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 12px;
+            background-color: #e8f7e8;
+            color: #0a7b0a;
+            border-left: 5px solid #0a7b0a;
+            font-size: 17px;
+        }
+
+        /* Receipt text must be fully black */
+        #receipt-box {
+            background: #ffffff !important;
+            color: #000 !important;
+        }
+
+        #receipt-box * {
+            color: #000 !important;
+            font-weight: 600 !important;
+        }
+
+        .tick {
+            font-size: 24px;
+            color: #0a7b0a;
+            margin-right: 10px;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .equal-btn {
+            width: 50%;
+            padding: 14px;
+            background-color: #f7d65b;
+            color: #0d1b3d;
+            font-size: 17px;
+            font-weight: bold;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .equal-btn-link {
+    width: 50%;
+    padding: 14px;
+    background-color: #0d1b3d;   /* NAVY BLUE */
+    color: #ffffff !important;   /* WHITE TEXT */
+    font-size: 17px;
+    font-weight: bold;
+    border-radius: 10px;
+    text-decoration: none;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.download-btn {
+    margin-top: 15px;
+    width: 100%;
+    padding: 14px;
+    background-color: #0d1b3d !important;
+    color: #ffffff !important; /* FIX: Make text white */
+    border: none;
+    border-radius: 8px;
+    font-weight: 900 !important;
+    font-size: 16px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    text-transform: uppercase;
+    text-align: center;
+}
+.download-btn,
+.download-btn *,
+#receipt-box .download-btn,
+#receipt-box .download-btn * {
+    color: #ffffff !important;
+    fill: #ffffff !important;   /* in case it was an SVG */
+    font-weight: 900 !important;
+}
+
+    </style>
+
+    <!-- PDF Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+        async function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const receipt = document.getElementById("receipt-box");
+
+            // High-Quality PDF Render
+            const canvas = await html2canvas(receipt, {
+                scale: 3,
+                backgroundColor: "#ffffff",
+                useCORS: true
+            });
+
+            const imgData = canvas.toDataURL("image/png");
+            const pdf = new jsPDF("p", "pt", "a4");
+
+            const imgWidth = 550;
+            const imgHeight = canvas.height * imgWidth / canvas.width;
+
+            pdf.addImage(imgData, "PNG", 20, 20, imgWidth, imgHeight);
+            pdf.save("NexaBank_Deposit_Receipt.pdf");
+        }
+
+        function showProcessing() {
+            document.getElementById("processing").style.display = "block";
+        }
+
+        function playSuccess() {
+            const audio = document.getElementById("successSound");
+            audio.volume = 0.4;
+            audio.play();
+        }
+    </script>
+
+</head>
+
+<body>
+
+<div class="navbar">NEXA BANK</div>
+
+<div class="container">
+
+    <h2>Deposit Money</h2>
+    <div class="subtitle">Secure — Fast — Trusted</div>
+
+    <!-- Processing -->
+    <div id="processing" class="processing-box">
+        ⏳ Processing deposit… Please wait.
+    </div>
+
+    <!-- Success Box -->
+    <div th:if="${success}" class="success-box">
+        <div>
+            <span class="tick">✔</span>
+            <strong th:text="${success}"></strong>
+        </div>
+
+        <p th:if="${updatedBalance}" style="margin-top:10px;">
+            <strong>Updated Balance: ₹</strong>
+            <span th:text="${updatedBalance}"></span>
+        </p>
+
+        <script>playSuccess();</script>
+    </div>
+
+    <!-- RECEIPT BOX -->
+    <div th:if="${transactionId}" id="receipt-box" style="
+        margin-top: 25px;
+        border-left: 5px solid #0d1b3d;
+        padding: 20px;
+        border-radius: 12px;
+    ">
+
+        <h3 style="font-weight:700; margin-bottom:10px;">
+            🧾 Nexa Bank - Deposit Receipt
+        </h3>
+
+        <p><strong>Transaction ID:</strong> <span th:text="${transactionId}"></span></p>
+        <p><strong>Date:</strong> <span th:text="${date}"></span></p>
+        <p><strong>Time:</strong> <span th:text="${time}"></span></p>
+        <p><strong>Account Number:</strong> <span th:text="${accountNumber}"></span></p>
+        <p><strong>Holder Name:</strong> <span th:text="${holderName}"></span></p>
+        <p><strong>Amount Deposited:</strong> ₹<span th:text="${amount}"></span></p>
+        <p><strong>New Balance:</strong> ₹<span th:text="${updatedBalance}"></span></p>
+
+        <button onclick="downloadPDF()" class="download-btn">
+            DOWNLOAD RECEIPT (PDF)
+        </button>
+    </div>
+
+    <!-- Error Box -->
+    <div th:if="${error}" class="error-box">
+        <strong th:text="${error}"></strong>
+    </div>
+
+    <!-- Deposit Form -->
+    <form th:action="@{'/deposit'(accountNumber=${accountNumber})}" method="post" onsubmit="showProcessing()">
+
+        <label><strong>Enter Amount</strong></label>
+        <input type="number" name="amount" placeholder="Enter amount" min="1" required />
+
+        <div class="button-row">
+            <button type="submit" class="equal-btn">Deposit ₹</button>
+            <a th:href="@{'/dashboard'(accountNumber=${accountNumber})}" class="equal-btn-link">
+                Back to Dashboard
+            </a>
+        </div>
+
+    </form>
+
+</div>
+
+</body>
+</html>

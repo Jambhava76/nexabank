@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nexa Bank - All Accounts</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #0d1b3d;
+            font-family: 'Segoe UI', sans-serif;
+            color: white;
+        }
+
+        .navbar {
+            background: #0b1533;
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.4);
+        }
+
+        .navbar h2 {
+            color: #f5c542;
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .back-btn {
+            background: #f5c542;
+            color: #0d1b3d;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .container {
+            padding: 40px;
+        }
+
+        h2 {
+            color: #f5c542;
+            margin-bottom: 20px;
+            font-size: 26px;
+        }
+
+        .search-box {
+            width: 300px;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #11265a;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th {
+            background: #1a2f55;
+            padding: 15px;
+            text-align: left;
+            color: #f5c542;
+            font-size: 16px;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #284577;
+        }
+
+        tr:hover {
+            background: #173464;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <h2>All Customer Accounts</h2>
+    <a class="back-btn" href="/admin-dashboard">← Dashboard</a>
+</div>
+
+<div class="container">
+
+    <h2>Customer Account List</h2>
+
+    <!-- SEARCH BAR -->
+    <input type="text" id="searchInput" class="search-box" placeholder="Search by Account Number or Name"
+           onkeyup="filterTable()">
+
+    <!-- ACCOUNTS TABLE -->
+    <table id="accountsTable">
+        <thead>
+        <tr>
+            <th>Account Number</th>
+            <th>Holder Name</th>
+            <th>Gender</th>
+            <th>Balance</th>
+            <th>Account Type</th>
+            <th>Created At</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="acc : ${accounts}">
+            <td th:text="${acc.accountNumber}"></td>
+            <td th:text="${acc.holderName}"></td>
+            <td th:text="${acc.gender}"></td>
+            <td th:text="${acc.balance}"></td>
+            <td th:text="${acc.accountType}"></td>
+            <td th:text="${acc.createdAt}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // SEARCH FUNCTION
+    function filterTable() {
+        let query = document.getElementById("searchInput").value.toLowerCase();
+        let table = document.getElementById("accountsTable");
+        let rows = table.getElementsByTagName("tr");
+
+        for (let i = 1; i < rows.length; i++) {
+            let cells = rows[i].getElementsByTagName("td");
+            let match = false;
+
+            for (let j = 0; j < 2; j++) { // only accountNumber + name
+                if (cells[j].innerText.toLowerCase().includes(query)) {
+                    match = true;
+                    break;
+                }
+            }
+            rows[i].style.display = match ? "" : "none";
+        }
+    }
+</script>
+
+</body>
+</html>

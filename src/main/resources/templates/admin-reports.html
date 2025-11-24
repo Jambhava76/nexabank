@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nexa Bank - Generate Reports</title>
+
+    <style>
+        :root{
+            --navy: #0b1533;
+            --bg: #0d1b3d;
+            --panel: #11265a;
+            --gold: #f5c542;
+            --gold-dark: #d7a831;
+            --text-dark: #0d1b3d;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            font-family: 'Segoe UI', sans-serif;
+            color: white;
+        }
+
+        .navbar {
+            background: var(--navy);
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.4);
+        }
+
+        .navbar h2 { color: var(--gold); margin: 0; }
+
+        .back-btn {
+            background: var(--gold);
+            color: var(--text-dark);
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .container {
+            padding: 40px;
+            max-width: 1300px;
+            margin: auto;
+        }
+
+        h3 {
+            color: var(--gold);
+            font-size: 26px;
+            margin-bottom: 20px;
+        }
+
+        /* 3 boxes in one row */
+        .report-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .report-section {
+            background: var(--panel);
+            padding: 25px;
+            border-radius: 15px;
+            width: 32%;                /* Ensures exactly 3 per row */
+            box-shadow: 0 0 20px rgba(0,0,0,0.35);
+        }
+
+        .report-section h4 {
+            color: var(--gold);
+            margin: 0 0 10px;
+        }
+
+        /* Gold Buttons */
+        .btn-download {
+            display: inline-block;
+            margin-top: 12px;
+            margin-right: 10px;
+            padding: 10px 18px;
+            background: var(--gold);
+            color: var(--text-dark);
+            font-weight: 700;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+            transition: 0.2s;
+        }
+
+        .btn-download:hover {
+            background: var(--gold-dark);
+            transform: translateY(-3px);
+        }
+
+        @media(max-width: 900px){
+            .report-container {
+                flex-direction: column;
+            }
+            .report-section {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <h2>Generate Reports</h2>
+    <a class="back-btn" href="/admin-dashboard">← Dashboard</a>
+</div>
+
+<div class="container">
+
+    <h3>Download System Reports</h3>
+
+    <div class="report-container">
+
+        <div class="report-section">
+            <h4>📄 Account Report</h4>
+            <p>Download a full list of all bank accounts.</p>
+
+            <a href="/admin/reports/accounts/csv" class="btn-download">Download CSV</a>
+            <a href="/admin/reports/accounts/pdf" class="btn-download">Download PDF</a>
+        </div>
+
+        <div class="report-section">
+            <h4>💰 Transaction Report</h4>
+            <p>Download all transactions performed.</p>
+
+            <a href="/admin/reports/transactions/csv" class="btn-download">Download CSV</a>
+            <a href="/admin/reports/transactions/pdf" class="btn-download">Download PDF</a>
+        </div>
+
+        <div class="report-section">
+            <h4>🛡 Freeze / Unfreeze Logs</h4>
+            <p>Download a list of all admin log actions.</p>
+
+            <a href="/admin/reports/logs/csv" class="btn-download">Download CSV</a>
+            <a href="/admin/reports/logs/pdf" class="btn-download">Download PDF</a>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

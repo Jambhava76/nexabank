@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Loan Requests – Nexa Bank Admin</title>
+
+    <style>
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #071739; color: white; }
+        .top-bar { padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; }
+        .top-bar h1 { color: #f5c542; font-size: 28px; margin: 0; }
+        .back-btn { background: #f5c542; color: #071739; padding: 10px 20px; border-radius: 10px; font-weight: bold; text-decoration: none; }
+        table { width: 100%; border-collapse: collapse; background: #0e1e40; margin-top: 20px; border-radius: 12px; overflow: hidden; }
+        th, td { padding: 14px; text-align: left; }
+        th { background: #12264d; color: #f5c542; }
+        tr:hover { background: #1a2f55; }
+        .badge { padding: 6px 10px; border-radius: 8px; color: white; font-weight: bold; }
+        .pending { background: #f5c542; color: black; }
+        .approved { background: #16c784; }
+        .disbursed { background: #16c784; }
+        .rejected { background: #ff4d4d; }
+        .btn { padding: 6px 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .approve-btn { background: #16c784; color: black; }
+        .reject-btn { background: #ff4d4d; color: white; }
+    </style>
+</head>
+
+<body>
+
+<div class="top-bar">
+    <h1>All Loan Requests</h1>
+    <a class="back-btn" href="/admin-dashboard">← Dashboard</a>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>Account Number</th>
+        <th>Loan Type</th>
+        <th>Amount</th>
+        <th>Tenure</th>
+        <th>Interest</th>
+        <th>EMI</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="loan : ${loanList}">
+        <td th:text="${loan.accountNumber}"></td>
+        <td th:text="${loan.loanType}"></td>
+        <td>₹<span th:text="${loan.amount}"></span></td>
+        <td th:text="${loan.tenure} + ' months'"></td>
+        <td th:text="${loan.interestRate} + '%'"></td>
+        <td>₹<span th:text="${loan.emiAmount}"></span></td>
+
+        <td>
+            <span class="badge pending" th:if="${loan.status.name() == 'PENDING'}">PENDING</span>
+            <span class="badge approved" th:if="${loan.status.name() == 'APPROVED'}">APPROVED</span>
+            <span class="badge disbursed" th:if="${loan.status.name() == 'DISBURSED'}">DISBURSED</span>
+            <span class="badge rejected" th:if="${loan.status.name() == 'REJECTED'}">REJECTED</span>
+        </td>
+
+        <td>
+            <span th:if="${loan.status.name() != 'PENDING'}">—</span>
+
+            <button th:if="${loan.status.name() == 'PENDING'}"
+                    class="btn approve-btn"
+                    th:attr="onclick=|openModal('APPROVE', ${loan.id})|">
+                Approve
+            </button>
+
+
+            <button th:if="${loan.status.name() == 'PENDING'}"
+                    class="btn reject-btn"
+                    th:attr="onclick=|openModal('REJECT', '${loan.id}')|">
+                Reject
+            </button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+
+<!-- FINAL SINGLE MODAL -->
+<div id="reasonModal" style="
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.5);
+    justify-content:center;
+    align-items:center;">
+
+    <div style="background:white; padding:20px; width:350px; border-radius:10px; color:black;">
+
+        <h3 id="modalTitle"></h3>
+
+        <textarea id="reasonInput"
+                  placeholder="Enter reason"
+                  style="width:100%; height:90px;"></textarea>
+
+        <br><br>
+
+        <button onclick="closeModal()">Cancel</button>
+        <button onclick="submitLoanAction()">Submit</button>
+    </div>
+</div>
+
+<script>
+    let currentLoanId = null;
+    let currentAction = null;
+
+    function openModal(action, loanId) {
+        currentLoanId = loanId;
+        currentAction = action;
+        document.getElementById("modalTitle").innerText =
+                action === "APPROVE" ? "Approve Loan" : "Reject Loan";
+
+        document.getElementById("reasonModal").style.display = "flex";
+    }
+
+    function closeModal() {
+        document.getElementById("reasonInput").value = "";
+        document.getElementById("reasonModal").style.display = "none";
+    }
+
+   function submitLoanAction() {
+    const reason = document.getElementById("reasonInput").value.trim();
+
+    if (reason === "") {
+        alert("Reason cannot be empty!");
+        return;
+    }
+
+    const form = document.createElement("form");
+    form.method = "post";
+
+    form.action = currentAction === "APPROVE"
+        ? "/admin/loans/approve"
+        : "/admin/loans/reject";
+
+    // FIX: Don't use Thymeleaf for JS values
+    let loanIdInput = document.createElement("input");
+    loanIdInput.type = "hidden";
+    loanIdInput.name = "loanId";
+    loanIdInput.value = currentLoanId;
+
+    let reasonInput = document.createElement("input");
+    reasonInput.type = "hidden";
+    reasonInput.name = "reason";
+    reasonInput.value = reason;
+
+    form.appendChild(loanIdInput);
+    form.appendChild(reasonInput);
+
+    document.body.appendChild(form);
+    form.submit();
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexa Bank - Welcome</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(to right, #0d1b3d, #1d3a73);
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .welcome-container {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 50px;
+            display: flex;
+            width: 80%;
+            max-width: 1300px;
+            min-height: 420px;
+            box-shadow: 0px 0px 35px rgba(255, 215, 0, 0.35);
+            color: #1d3a73;
+        }
+
+        /* Dividing into two halves */
+        .left, .right {
+            width: 50%;
+        }
+
+        .left {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .left img {
+            width: 85%;
+            max-width: 300px;
+        }
+
+        .right {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 40px;
+        }
+
+        .right h1 {
+            font-size: 42px;
+            color: #0d1b3d;
+            font-weight: 700;
+        }
+
+        .right p {
+            font-size: 18px;
+            margin-top: 10px;
+            color: #2a4b74;
+        }
+
+        .get-started-btn {
+            background-color: #f7d65b;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .get-started-btn:hover {
+            background-color: #ffd600;
+            transform: scale(1.08);
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="welcome-container">
+    <div class="left">
+        <!-- ✅ Image loads from /static -->
+        <img th:src="@{/bank.png}" alt="Bank Icon">
+    </div>
+
+    <div class="right">
+        <h1>Welcome to Nexa Bank</h1>
+        <p>Your Trusted Partner for Safe, Smart and Secure Banking.</p>
+        <a href="/choose">
+
+        <button class="get-started-btn mt-4">Get Started →</button>
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Raise Complaint - Nexa Bank</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f5f7fb;
+            color: #0d1b3d;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background-color: #0d1b3d;
+            color: #f7d65b;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        /* DASHBOARD BUTTON */
+        .back-btn {
+            background: #f5c542;
+            color: #0d1b3d;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #ffe27a;
+            transform: scale(1.05);
+        }
+
+        /* SUCCESS BAR */
+        .success-bar {
+            background: #c3ffd3;
+            color: #006d2a;
+            padding: 12px;
+            width: 60%;
+            margin: 20px auto;
+            border-radius: 8px;
+            border-left: 5px solid #00a241;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* FORM CONTAINER */
+        .container {
+            background: white;
+            width: 60%;
+            margin: 30px auto 60px auto;
+            padding: 30px 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #1d3a73;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #0d1b3d;
+        }
+
+        select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #d6dff5;
+            border-radius: 8px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            font-size: 15px;
+            background-color: #f8fbff;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .btn {
+            background-color: #f7d65b;
+            color: #0d1b3d;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #ffd700;
+            transform: scale(1.05);
+        }
+
+        footer {
+            text-align: center;
+            background-color: #0d1b3d;
+            color: #ccc;
+            padding: 15px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <h1>NEXA BANK</h1>
+
+    <!-- NEW BACK BUTTON -->
+    <a class="back-btn"
+       th:href="@{'/dashboard'(accountNumber=${accountNumber})}">
+        ← Dashboard
+    </a>
+</div>
+
+
+<!-- SUCCESS MESSAGE -->
+<div th:if="${success}" class="success-bar">
+    Complaint submitted successfully! We will resolve it shortly.
+</div>
+
+
+<!-- Complaint Form -->
+<div class="container">
+    <h2>Raise a Complaint</h2>
+
+    <form action="/submit-complaint" method="post">
+
+        <input type="hidden" name="accountNumber" th:value="${accountNumber}">
+
+        <label>Complaint Type</label>
+        <select name="type" required>
+            <option>Select Type</option>
+            <option>Transaction Issue</option>
+            <option>Card Issue</option>
+            <option>KYC Issue</option>
+            <option>Loan Issue</option>
+            <option>Other</option>
+        </select>
+
+        <label>Description</label>
+        <textarea name="description" rows="5" placeholder="Explain your issue..." required></textarea>
+
+        <button type="submit" class="btn">Submit Complaint</button>
+    </form>
+</div>
+
+<footer>
+    © 2025 Nexa Bank. All Rights Reserved.
+</footer>
+
+</body>
+</html>

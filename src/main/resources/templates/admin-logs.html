@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nexa Bank - Admin Logs</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #0d1b3d;
+            font-family: 'Segoe UI', sans-serif;
+            color: white;
+        }
+
+        .navbar {
+            background: #0b1533;
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.4);
+        }
+
+        .navbar h2 {
+            color: #f5c542;
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .back-btn {
+            background: #f5c542;
+            color: #0d1b3d;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .container {
+            padding: 40px;
+        }
+
+        h2 {
+            color: #f5c542;
+            margin-bottom: 20px;
+            font-size: 26px;
+        }
+
+        .search-box {
+            width: 500px;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #11265a;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th {
+            background: #1a2f55;
+            padding: 14px;
+            color: #f5c542;
+            text-align: left;
+            font-size: 16px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #284577;
+            font-size: 15px;
+        }
+
+        tr:hover {
+            background: #173464;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <h2>Admin Activity Logs</h2>
+    <a class="back-btn" href="/admin-dashboard">← Dashboard</a>
+</div>
+
+<div class="container">
+
+    <h2>Freeze / Unfreeze Logs</h2>
+
+    <!-- Search -->
+    <input type="text" id="searchInput" class="search-box"
+           placeholder="Search by Admin ID / Account Number / Action"
+           onkeyup="filterTable()">
+
+    <table id="logsTable">
+        <thead>
+        <tr>
+            <th>Admin ID</th>
+            <th>Account Number</th>
+            <th>Action</th>
+            <th>Time</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="log : ${logs}">
+            <td th:text="${log.adminId}"></td>
+            <td th:text="${log.accountNumber}"></td>
+            <td th:text="${log.action}"></td>
+
+            <!-- FIXED TIMESTAMP FIELD -->
+            <td th:text="${#temporals.format(log.timestamp, 'dd-MM-yyyy HH:mm:ss')}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function filterTable() {
+        let query = document.getElementById("searchInput").value.toLowerCase();
+        let rows = document.querySelectorAll("#logsTable tbody tr");
+
+        rows.forEach(row => {
+            let text = row.innerText.toLowerCase();
+            row.style.display = text.includes(query) ? "" : "none";
+        });
+    }
+</script>
+
+</body>
+</html>

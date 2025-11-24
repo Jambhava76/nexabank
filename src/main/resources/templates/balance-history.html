@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Balance History - Nexa Bank</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f5f7fb;
+            margin: 0;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background-color: #0d1b3d;
+            padding: 15px 40px;
+            color: #f7d65b;
+            font-size: 22px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* BACK BUTTON (TOP RIGHT) */
+        .btn-back {
+            background-color: #f7d65b;
+            color: #0d1b3d;
+            padding: 3px 10px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .btn-back:hover {
+            background-color: #ffd700;
+            transform: scale(1.05);
+        }
+
+        /* MAIN CONTAINER */
+        .container {
+            width: 60%;
+            margin: 40px auto;
+            background: white;
+            padding: 35px 45px;
+            border-radius: 18px;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.10);
+        }
+
+        h2 {
+            color: #0d1b3d;
+            margin-bottom: 25px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        /* TABLE */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        th {
+            background: #0d1b3d;
+            color: #f7d65b;
+            padding: 12px;
+            font-size: 17px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        td {
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+            color: #0d1b3d;
+            font-size: 16px;
+        }
+
+        tr:hover {
+            background: #f1f4ff;
+            transition: 0.2s ease;
+        }
+
+        .today-row {
+            background: #fff9d9;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 25px;
+            }
+
+            td, th {
+                font-size: 14px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <div>NEXA BANK</div>
+
+    <!-- TOP RIGHT BACK BUTTON -->
+    <a th:href="@{'/dashboard'(accountNumber=${accNumber})}" class="btn-back">← Dashboard</a>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="container">
+
+    <h2>Balance History (Last 10 Days)</h2>
+
+    <p><strong>Account Number:</strong> <span th:text="${accNumber}"></span></p>
+    <p><strong>Holder Name:</strong> <span th:text="${holderName}"></span></p>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Closing Balance</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="h, iter : ${history}"
+            th:classappend="${iter.index == 0} ? 'today-row'">
+            <td th:text="${h.date}"></td>
+            <td>₹<span th:text="${h.balance}"></span></td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>

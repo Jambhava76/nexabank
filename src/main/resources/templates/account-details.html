@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Account Details — Nexa Bank</title>
+
+    <style>
+        :root{
+            --blue-900:#07133a;
+            --blue-800:#0d2546;
+            --blue-700:#143a72;
+            --blue-600:#1b4f8a;
+
+            --gold-600:#f5c542;
+            --gold-500:#f7d65b;
+
+            --muted:#94a3c2;
+        }
+
+        *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif;}
+
+        body{
+            background: linear-gradient(180deg,#071336,#0d1f43,#12335c);
+            color:#0d1b3d;
+            padding-bottom: 40px;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: #0d1b3d;
+            color: #f5c542;
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.4);
+        }
+
+        .navbar h1 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 800;
+        }
+
+        .back-btn {
+            background: #f5c542;
+            color: #0d1b3d;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .back-btn:hover{
+            background:#ffe083;
+            transform: scale(1.05);
+        }
+
+        /* CARD */
+        .card{
+            width: min(1100px, 90%);
+            margin: 40px auto;
+            background: white;
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.25);
+        }
+
+        /* HEADING */
+        .header{
+            display:flex;
+            align-items:center;
+            gap:15px;
+        }
+
+        .logo{
+            width:60px;
+            height:60px;
+            background: #143a72;
+            border-radius: 12px;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            color:white;
+            font-size:22px;
+            font-weight:800;
+        }
+
+        .title{
+            font-size:26px;
+            font-weight:800;
+            color:#0d1b3d;
+        }
+
+        .subtitle{
+            font-size:14px;
+            color:#607299;
+        }
+
+        /* GRID */
+        .grid{
+            margin-top:30px;
+            display:grid;
+            grid-template-columns: 280px 1fr;
+            gap:25px;
+        }
+
+        @media(max-width:900px){
+            .grid{ grid-template-columns:1fr; }
+        }
+
+        /* PROFILE BOX — centered medium layout */
+.profile-box{
+    background:#f8faff;
+    border-radius:14px;
+    padding:25px;
+    text-align:center;
+    border:1px solid #d7e0f7;
+
+    /* ❤️ CENTER the box vertically & horizontally IN ITS COLUMN */
+    display:flex;
+    flex-direction:column;
+    justify-content:center;   /* center vertically */
+    align-items:center;       /* center horizontally */
+
+    /* 🔥 Keep box medium-sized (no tall empty space) */
+    min-height:220px;
+    max-height:240px;
+}
+
+
+        .avatar{
+            width:95px;
+            height:95px;
+            border-radius:50%;
+            background:#e8efff;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            font-size:40px;
+            font-weight:800;
+            color:#143a72;
+            margin:auto;
+        }
+
+        .holder-name{
+            margin-top:12px;
+            font-size:22px;
+            font-weight:800;
+            color:#0d1b3d;
+        }
+
+        .acc-type{
+            margin-top:4px;
+            color:#607299;
+            font-size:14px;
+        }
+
+        /* INFO GRID */
+        .info-grid{
+            display:grid;
+            grid-template-columns: repeat(2,1fr);
+            gap:15px;
+        }
+
+        @media(max-width:700px){
+            .info-grid{ grid-template-columns:1fr; }
+        }
+
+        .field{
+            background:#f8fbff;
+            border-radius:12px;
+            padding:15px 18px;
+            border:1px solid #d6e0fa;
+        }
+
+        .label{
+            color:#607299;
+            font-size:13px;
+            font-weight:700;
+        }
+
+        .value{
+            color:#0d1b3d;
+            font-weight:800;
+            font-size:17px;
+            margin-top:5px;
+            word-break:break-word;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <h1>NEXA BANK</h1>
+
+    <a th:href="@{'/dashboard'(accountNumber=${account.accountNumber})}" class="back-btn">
+        ← Dashboard
+    </a>
+</div>
+
+<!-- MAIN CARD -->
+<div class="card">
+
+    <div class="header">
+        <div class="logo">NB</div>
+        <div>
+            <div class="title">Account Details</div>
+            <div class="subtitle">Premium • Secure • Trusted</div>
+        </div>
+    </div>
+
+    <div class="grid">
+
+        <!-- LEFT PROFILE -->
+        <div class="profile-box">
+
+            <div class="avatar"
+                 th:text="${account.holderName != null ? account.holderName.substring(0,1).toUpperCase() : 'U'}">
+            </div>
+
+            <div class="holder-name" th:text="${account.holderName}">John</div>
+
+            <div class="acc-type" th:text="${account.accountType}">Savings Account</div>
+
+        </div>
+
+        <!-- RIGHT INFO SECTION -->
+        <div class="info-grid">
+
+            <!-- ⭐ NEW: ACCOUNT HOLDER NAME (FIRST BOX) -->
+            <div class="field">
+                <div class="label">Account Holder</div>
+                <div class="value" th:text="${account.holderName}"></div>
+            </div>
+
+            <div class="field">
+                <div class="label">Account Number</div>
+                <div class="value" th:text="${account.accountNumber}"></div>
+            </div>
+
+            <div class="field">
+                <div class="label">Email</div>
+                <div class="value" th:text="${account.email}"></div>
+            </div>
+
+            <div class="field">
+                <div class="label">Phone Number</div>
+                <div class="value" th:text="${account.phoneNumber}"></div>
+            </div>
+
+            <div class="field">
+                <div class="label">Date of Birth</div>
+                <div class="value" th:text="${account.dob != null ? account.dob : '—'}"></div>
+            </div>
+
+            <div class="field">
+                <div class="label">Gender</div>
+                <div class="value" th:text="${account.gender != null ? account.gender : '—'}"></div>
+            </div>
+
+            <div class="field">
+                <div class="label">Address</div>
+                <div class="value" th:text="${account.address != null ? account.address : '—'}"></div>
+            </div>
+
+            <div class="field">
+                <div class="label">Branch</div>
+                <div class="value" th:text="${account.branchName}"></div>
+            </div>
+
+            <div class="field">
+                <div class="label">IFSC</div>
+                <div class="value" th:text="${account.ifscCode}"></div>
+            </div>
+
+            <div class="field">
+                <div class="label">Available Balance</div>
+                <div class="value" th:text="'₹ ' + ${account.balance}"></div>
+            </div>
+
+        </div>
+
+
+    </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

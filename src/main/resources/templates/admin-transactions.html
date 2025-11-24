@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nexa Bank - All Transactions</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #0d1b3d;
+            font-family: 'Segoe UI', sans-serif;
+            color: white;
+        }
+
+        .navbar {
+            background: #0b1533;
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.4);
+        }
+
+        .navbar h2 {
+            color: #f5c542;
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .back-btn {
+            background: #f5c542;
+            color: #0d1b3d;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .container {
+            padding: 40px;
+        }
+
+        h2 {
+            color: #f5c542;
+            margin-bottom: 20px;
+            font-size: 26px;
+        }
+
+        .search-box {
+            width: 300px;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #11265a;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th {
+            background: #1a2f55;
+            padding: 15px;
+            text-align: left;
+            color: #f5c542;
+            font-size: 15px;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #284577;
+        }
+
+        tr:hover {
+            background: #173464;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <h2>All Transactions</h2>
+    <a class="back-btn" href="/admin-dashboard">← Dashboard</a>
+</div>
+
+<div class="container">
+
+    <h2>Transaction History</h2>
+
+    <!-- SEARCH BAR -->
+    <input type="text" id="searchInput" class="search-box"
+           placeholder="Search by Transaction ID / Account / Type"
+           onkeyup="filterTable()">
+
+    <!-- TRANSACTIONS TABLE -->
+    <table id="transactionsTable">
+        <thead>
+        <tr>
+            <th>Transaction ID</th>
+            <th>Type</th>
+            <th>Account Number</th>
+
+            <th>Receiver</th>
+            <th>Amount</th>
+            <th>Balance After</th>
+            <th>Time</th>
+
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="tx : ${transactions}">
+            <td th:text="${tx.transactionId}"></td>
+            <td th:text="${tx.type}"></td>
+            <td th:text="${tx.accountNumber}"></td>
+
+            <td th:text="${tx.receiverAccountNumber}"></td>
+            <td th:text="${tx.amount}"></td>
+            <td th:text="${tx.balanceAfter}"></td>
+            <td th:text="${tx.transactionTime}"></td>
+
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // SEARCH FUNCTION
+    function filterTable() {
+        let query = document.getElementById("searchInput").value.toLowerCase();
+        let rows = document.querySelectorAll("#transactionsTable tbody tr");
+
+        rows.forEach(row => {
+            let text = row.innerText.toLowerCase();
+            row.style.display = text.includes(query) ? "" : "none";
+        });
+    }
+</script>
+
+</body>
+</html>

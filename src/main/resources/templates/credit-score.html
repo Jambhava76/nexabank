@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Credit Score - Nexa Bank</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #eef2fa;
+        }
+
+        .navbar {
+            background: #0d1b3d;
+            color: #f7d65b;
+            padding: 18px 40px;
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 55%;
+            margin: 40px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            margin: 25px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .green { background: #16a34a; }
+        .yellow { background: #facc15; color:#000; }
+        .red { background: #dc2626; }
+
+        .btn-back {
+            margin-top: 25px;
+            display: inline-block;
+            background: #0d1b3d;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">NEXA BANK</div>
+
+<div class="container">
+
+    <h2>Credit Score</h2>
+    <h3 th:text="${holderName}"></h3>
+
+    <!-- Score Circle -->
+    <div th:class="'score-circle ' +
+        (${score} >= 750 ? 'green' : (${score} >= 600 ? 'yellow' : 'red'))">
+
+        <span th:text="${score}"></span>
+    </div>
+
+    <p>
+        <b>Status:</b>
+        <span th:text="${score >= 750 ? 'Excellent'
+               : (score >= 600 ? 'Good' : 'Poor')}"></span>
+    </p>
+
+    <a th:href="@{'/dashboard'(accountNumber=${accountNumber})}" class="btn-back">
+        ← Back to Dashboard
+    </a>
+</div>
+
+</body>
+</html>

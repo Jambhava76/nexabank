@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Account Created</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+        :root{
+            --bg-start:#08172b;
+            --bg-end:#0b2a55;
+            --card:#ffffff;
+            --accent:#f7c948;
+            --accent-dark:#e6b93f;
+            --muted:#6b7a8f;
+            --primary:#0d2b4b;
+            --shadow: 0 24px 60px rgba(8,20,39,0.45);
+            --radius:22px;
+            --container-w:1050px;
+        }
+
+        html,body{
+            height:100%;
+            margin:0;
+            font-family: "Segoe UI", Roboto, Arial, sans-serif;
+            background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%);
+            overflow:hidden;
+        }
+
+        .wrap{
+            height:100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:32px;
+            box-sizing:border-box;
+        }
+
+        .card {
+    width:100%;
+    max-width:var(--container-w);
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:55px 60px;
+    box-shadow: var(--shadow);
+    display:flex;
+    gap:65px;
+    align-items:center;   /* changed from flex-start */
+    box-sizing:border-box;
+}
+
+
+        /* LEFT SIDE – centered vertically */
+        .left {
+            flex:0 0 420px;
+            display:flex !important;
+            flex-direction:column !important;
+            justify-content:center !important; /* IMPORTANT: centers vertically */
+            align-items:flex-start !important;
+            text-align:left !important;
+            height:100% !important;
+            padding:0 !important; /* remove any top padding overrides */
+        }
+
+        .title {
+            font-size:38px;
+            font-weight:900;
+            color:var(--primary);
+            margin:0 0 10px;
+            line-height:1.1;
+        }
+
+        .subtitle {
+            color:var(--muted);
+            font-size:16px;
+            margin:0;
+        }
+
+        /* RIGHT SIDE – DETAILS */
+        .right {
+            flex:1;
+            display:flex;
+            flex-direction:column;
+        }
+
+        .greeting {
+            font-size:26px;
+            margin:0 0 22px;
+            color:#1c8c3a;
+            font-weight:900;
+        }
+
+        .info-grid{
+            display:grid;
+            grid-template-columns:repeat(2, 1fr);
+            gap:18px 26px;
+        }
+
+        .info {
+            background:rgba(19,59,106,0.02);
+            border-radius:14px;
+            padding:18px 20px;
+            box-shadow:0 8px 30px rgba(19,59,106,0.05);
+        }
+
+        .info small {
+            display:block;
+            color:var(--muted);
+            font-size:13px;
+            margin-bottom:8px;
+            font-weight:600;
+        }
+
+        .info strong {
+            display:block;
+            color:#0b1e2f;
+            font-size:20px;
+            font-weight:900;
+        }
+
+        .branch {
+            grid-column:1 / -1;
+        }
+
+        .cta-wrap {
+            margin-top:32px;
+            display:flex;
+            justify-content:flex-start;
+        }
+
+        .cta {
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:10px;
+            padding:15px 32px;
+            border-radius:14px;
+            background:linear-gradient(180deg, var(--accent), var(--accent-dark));
+            color:#071522;
+            text-decoration:none;
+            font-weight:900;
+            font-size:18px;
+            box-shadow:0 14px 36px rgba(231,165,27,0.18);
+        }
+
+        .cta:hover { transform:translateY(-3px); }
+
+        .helper { margin-top:14px; color:#5b6c80; font-size:14px; }
+
+        /* responsive */
+        @media (max-width:1050px){
+            .card{ flex-direction:column; text-align:center; padding:32px; }
+            .left, .right { width:100%; text-align:center; align-items:center; }
+            .cta-wrap { justify-content:center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrap">
+    <div class="card">
+
+        <!-- LEFT SIDE -->
+        <div class="left">
+            <div class="title">Account Created<br>Successfully!</div>
+            <div class="subtitle">Welcome to Nexa Bank — your new journey starts here.</div>
+        </div>
+
+        <!-- RIGHT SIDE -->
+        <div class="right">
+            <p class="greeting">
+                <b th:text="${holder}">Holder Name</b>, your account details:
+            </p>
+
+            <div class="info-grid">
+                <div class="info">
+                    <small>Account Number</small>
+                    <strong th:text="${accNumber}">SBIN0012345</strong>
+                </div>
+
+                <div class="info">
+                    <small>IFSC</small>
+                    <strong th:text="${ifsc}">SBIN009343</strong>
+                </div>
+
+                <div class="info branch">
+                    <small>Branch</small>
+                    <strong th:text="${branch}">Mumbai - Andheri</strong>
+                </div>
+            </div>
+
+            <div class="cta-wrap">
+                <a th:href="@{/login}" class="cta">Login Now</a>
+            </div>
+
+            <div class="helper">
+                Keep your account number & IFSC safe. Check your registered email for further instructions.
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

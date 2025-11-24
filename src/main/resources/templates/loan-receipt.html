@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Loan Receipt – Nexa Bank</title>
+
+    <style>
+        :root{
+            --nav-blue:#0d1b3d;
+            --gold:#f7d65b;
+            --bg:#f4f7fc;
+        }
+
+        body{
+            background:var(--bg);
+            font-family:'Segoe UI',sans-serif;
+            margin:0;
+        }
+
+        .navbar{
+            background:var(--nav-blue);
+            color:var(--gold);
+            padding:18px 40px;
+            font-size:24px;
+            font-weight:700;
+            display:flex;
+            justify-content:space-between;
+            align-items: center;
+        }
+
+        .navbar a{
+            background:var(--gold);
+            color:var(--nav-blue);
+            font-size:16px;
+            padding:8px 12px;
+            border-radius:8px;
+            text-decoration:none;
+            font-weight:500;
+        }
+
+        .container{
+            background:white;
+            width:50%;
+            margin:40px auto;
+            padding:35px;
+            border-radius:14px;
+            box-shadow:0 8px 30px rgba(0,0,0,0.1);
+        }
+
+        h2{
+            color:var(--nav-blue);
+            margin-top: 0;
+        }
+
+        .row{
+            margin:8px 0;
+            font-size:16px;
+        }
+
+        .row b{
+            display:inline-block;
+            min-width: 150px;
+        }
+
+        .btn{
+            display:block;
+            width:100%;
+            padding:14px;
+            background:var(--gold);
+            color:var(--nav-blue);
+            text-align:center;
+            border-radius:10px;
+            text-decoration:none;
+            margin-top:25px;
+            font-weight:700;
+            cursor: pointer;
+        }
+
+        .btn:hover{
+            background:#ffde52;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+    NEXA BANK
+    <!-- use loan.accountNumber from the loan object -->
+    <a th:href="@{'/dashboard'(accountNumber=${loan.accountNumber})}">← Dashboard</a>
+</div>
+
+<div class="container">
+
+    <h2>Loan Application Submitted</h2>
+    <p>Your loan request has been recorded successfully.</p>
+
+    <!-- (Optional) show account number -->
+    <div class="row">
+        <b>Account Number:</b>
+        <span th:text="${loan.accountNumber}"></span>
+    </div>
+
+    <div class="row"><b>Loan Type:</b> <span th:text="${loan.loanType}"></span></div>
+
+    <!-- FIX: use loan.amount, not loan.loanAmount -->
+    <div class="row">
+        <b>Loan Amount:</b> ₹<span th:text="${loan.amount}"></span>
+    </div>
+
+    <div class="row">
+        <b>Tenure:</b> <span th:text="${loan.tenure}"></span> months
+    </div>
+
+    <div class="row">
+        <b>Interest Rate:</b> <span th:text="${loan.interestRate}"></span>%
+    </div>
+
+    <div class="row">
+        <b>EMI:</b> ₹<span th:text="${loan.emiAmount}"></span> / month
+    </div>
+
+    <div class="row">
+        <b>PAN:</b> <span th:text="${loan.pan}"></span>
+    </div>
+
+    <div class="row">
+        <b>Address:</b> <span th:text="${loan.address}"></span>
+    </div>
+
+    <div class="row">
+        <b>Date:</b> <span th:text="${loan.createdAt}"></span>
+    </div>
+
+    <!-- print as PDF using browser print dialog -->
+    <a href="javascript:void(0)" class="btn" onclick="window.print()">Download Receipt (PDF)</a>
+
+</div>
+
+</body>
+</html>

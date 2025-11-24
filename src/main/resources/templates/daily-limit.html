@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Daily Spending Limit - Nexa Bank</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f7fc;
+        }
+
+        /* NAVBAR (smaller like other pages) */
+        .navbar {
+            background-color: #0d1b3d;
+            color: #f7d65b;
+            padding: 15px 40px;
+            font-size: 22px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .back-btn {
+        font-size: 18px;
+            background-color: #f7d65b;
+            color: #0d1b3d;
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .back-btn:hover {
+            background-color: #ffd86b;
+            transform: scale(1.05);
+        }
+
+        /* MAIN CONTAINER */
+        .container {
+            width: 40%;
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #0d1b3d;
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #6d7b99;
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 95%;
+            padding: 14px;
+            border: 2px solid #cfd5e3;
+            border-radius: 8px;
+            margin-top: 8px;
+            font-size: 16px;
+        }
+
+        input:focus {
+            border-color: #0d1b3d;
+        }
+
+        .btn {
+            margin-top: 25px;
+            width: 100%;
+            padding: 14px;
+            background-color: #f7d65b;
+            color: #0d1b3d;
+            font-size: 17px;
+            font-weight: bold;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #ffd700;
+            transform: scale(1.05);
+        }
+
+        /* SUCCESS / ERROR */
+        .success-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f7e8;
+            color: #0a7b0a;
+            border-left: 6px solid #0a7b0a;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .error-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #ffe0e0;
+            color: red;
+            border-left: 6px solid red;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    NEXA BANK
+    <a th:href="@{'/dashboard'(accountNumber=${accountNumber})}" class="back-btn">
+        ← Dashboard
+    </a>
+</div>
+
+<!-- MAIN PAGE CONTENT -->
+<div class="container">
+
+    <h2>Daily Spending Limit</h2>
+    <div class="subtitle">Set your maximum daily limit for withdrawals and transfers</div>
+
+    <!-- SUCCESS MESSAGE -->
+    <div th:if="${success}" class="success-box">
+        ✔ <span th:text="${success}"></span>
+    </div>
+
+    <!-- ERROR MESSAGE -->
+    <div th:if="${error}" class="error-box">
+        ❌ <span th:text="${error}"></span>
+    </div>
+
+    <!-- CURRENT LIMIT -->
+    <p style="font-size:18px;color:#0d1b3d;font-weight:600;margin-top:20px;">
+        Current Limit: ₹ <span th:text="${currentLimit}"></span>
+    </p>
+
+    <!-- FORM -->
+    <form th:action="@{'/update-daily-limit'(accountNumber=${accountNumber})}" method="post">
+
+        <label><strong>Set New Daily Limit</strong></label>
+        <input type="number" name="limit" min="100" placeholder="Enter new limit" required>
+
+        <button type="submit" class="btn">Update Limit</button>
+
+    </form>
+
+</div>
+
+</body>
+</html>

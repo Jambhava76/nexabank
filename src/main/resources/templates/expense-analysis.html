@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Expense Analyzer</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            background:#f5f7fb;
+            font-family: 'Segoe UI', sans-serif;
+            margin:0;
+        }
+
+        .navbar {
+            background:#0d1b3d;
+            color:#f7d65b;
+            padding:15px 40px;
+            font-size:24px;
+            font-weight:bold;
+        }
+
+        .container {
+            width:60%;
+            margin:40px auto;
+            background:white;
+            padding:30px;
+            border-radius:12px;
+            box-shadow:0 5px 15px rgba(0,0,0,0.15);
+            text-align:center;
+        }
+
+        /* 🎯 FIX: Limit pie chart size */
+        #chartContainer {
+            width: 420px;
+            height: 420px;
+            margin: 0 auto;
+        }
+
+        .btn-back {
+            background:#0d1b3d;
+            color:white;
+            padding:12px 20px;
+            text-decoration:none;
+            display:inline-block;
+            border-radius:8px;
+            font-weight:bold;
+            margin-top:20px;
+        }
+
+        .btn-back:hover {
+            background:#13306b;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">NEXA BANK – Expense Analyzer</div>
+
+<div class="container">
+
+    <h2>Your Spending Breakdown</h2>
+
+    <!-- 📌 Chart Wrapper -->
+    <div id="chartContainer">
+        <canvas id="expenseChart"></canvas>
+    </div>
+
+    <a th:href="@{'/dashboard'(accountNumber=${accountNumber})}" class="btn-back">
+        ← Back to Dashboard
+    </a>
+
+</div>
+
+<!-- 📌 Chart Script -->
+<script th:inline="javascript">
+
+    let summary = [[${summary}]];
+
+    const labels = Object.keys(summary);
+    const dataValues = Object.values(summary);
+
+    new Chart(document.getElementById('expenseChart'), {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: dataValues,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+</script>
+
+</body>
+</html>

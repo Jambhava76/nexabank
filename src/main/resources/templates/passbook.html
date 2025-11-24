@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Passbook - Nexa Bank</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #f5f7fb;
+            color: #0d1b3d;
+        }
+
+        .navbar {
+            background: #0d1b3d;
+            color: #f7d65b;
+            padding: 18px 40px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .container {
+            width: 85%;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 26px;
+            color: #0d1b3d;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            margin-top: 6px;
+            color: #4c5c89;
+            font-size: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+        }
+
+        thead {
+            background: #0d1b3d;
+            color: #f7d65b;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #dfe6f7;
+            font-size: 15px;
+        }
+
+        .credit {
+            color: #0a8a0a;
+            font-weight: 700;
+        }
+
+        .debit {
+            color: #d91d1d;
+            font-weight: 700;
+        }
+
+        .note {
+            text-align: center;
+            color: #5b5b5b;
+            margin-top: 30px;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 18px;
+            background: #0d1b3d;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .btn-download {
+            float: right;
+            background: #f7d65b;
+            padding: 12px 18px;
+            border-radius: 8px;
+            color: #0d1b3d;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        tr:hover {
+            background: #f5faff;
+        }
+    </style>
+
+    <script>
+        function downloadPassbook() {
+            window.print();
+        }
+    </script>
+
+</head>
+
+<body>
+
+<div class="navbar">NEXA BANK</div>
+
+<div class="container">
+
+    <h2>Digital Passbook</h2>
+    <p class="subtitle">
+        <b th:text="${holderName}"></b> —
+        Account: <span th:text="${accountNumber}"></span>
+    </p>
+
+    <a href="javascript:void(0)" onclick="downloadPassbook()" class="btn-download">
+        Download / Print
+    </a>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Date & Time</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Balance After</th>
+            <th>Remarks</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="tx : ${transactions}">
+            <td th:text="${#temporals.format(tx.createdAt, 'dd-MM-yyyy HH:mm')}"></td>
+            <td th:text="${tx.type}"></td>
+
+            <!-- CREDIT / DEBIT LOGIC -->
+            <td th:class="${tx.type == 'DEPOSIT' or (tx.receiverAccountNumber == accountNumber)} ? 'credit' : 'debit'">
+                ₹<span th:text="${tx.amount}"></span>
+            </td>
+
+            <td>₹<span th:text="${tx.balanceAfter}"></span></td>
+            <td th:text="${tx.reason} ?: '—'"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a th:href="@{'/dashboard'(accountNumber=${accountNumber})}" class="btn-back">
+        ← Back to Dashboard
+    </a>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Nexa Bank</title>
+    <style>
+        /* 🌈 Basic Page Setup */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f5f7fb;
+            color: #0d1b3d;
+            transition: background 0.3s ease;
+        }
+
+        /* 🌟 Navbar */
+        .navbar {
+            background-color: #0d1b3d;
+            color: #f7d65b;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #f7d65b;
+        }
+
+        /* 🧾 Top Summary Section */
+        .top-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            margin: 30px auto;
+            padding: 30px 40px;
+            width: 85%;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        /* 👆 Hover Effect on top-summary box */
+        .top-summary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(13, 27, 61, 0.25);
+        }
+
+        .welcome-text {
+            font-size: 26px;
+            font-weight: 600;
+            color: #1d3a73;
+            margin-bottom: 10px;
+        }
+
+        .balance-box {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .balance-amount {
+            font-size: 40px;
+            font-weight: bold;
+            color: #0d1b3d;
+            margin-top: 5px;
+        }
+
+        .account-age {
+            text-align: right;
+            font-size: 18px;
+        }
+
+        .account-age .value {
+            color: #1d3a73;
+            font-weight: 600;
+            font-size: 20px;
+        }
+
+        /* 🧩 Action Cards */
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            width: 85%;
+            margin: 0 auto 80px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display:flex;
+            flex-direction:column;
+            justify-content:space-between;
+        }
+
+        /* ✨ Hover Lift Effect for Cards */
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(13, 27, 61, 0.25);
+        }
+
+        .card h3 {
+            color: #1d3a73;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            margin-bottom: 15px;
+            color: #334b77;
+            flex:1;
+        }
+
+        /* 🟡 Button Styling (works for <a> and <button>) */
+        .btn {
+            display:inline-block;
+            text-align:center;
+            background-color: #f7d65b;
+            color: #0d1b3d;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration:none;
+        }
+
+        .btn:hover {
+            background-color: #ffd700;
+            transform: scale(1.05);
+        }
+
+        /* ⚓ Footer */
+        footer {
+            text-align: center;
+            background-color: #0d1b3d;
+            color: #ccc;
+            padding: 15px;
+
+            bottom: 0;
+            width: 100%;
+            font-size: 14px;
+        }
+/* 🔥 Prevent horizontal scrolling everywhere */
+html, body {
+    width: 100%;
+    overflow-x: hidden !important;
+}
+
+/* Extra protection */
+.cards-container {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.card {
+    box-sizing: border-box;
+}
+
+        /* Responsive Fix */
+        @media (max-width: 900px) {
+            .cards-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+
+            .top-summary {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .account-age {
+                text-align: center;
+                margin-top: 15px;
+            }
+            /* 🌟 Logout button styled like gold button */
+.logout-btn {
+            background: #f5c542;
+            color: #0d1b3d;
+            padding: 10px 20px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #d9ad39;
+        }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+    <h1>NEXA BANK</h1>
+
+    <div class="nav-links">
+        <a href="/logout" class="logout-btn">Logout</a>
+    </div>
+</div>
+
+<!-- Top Summary -->
+<div class="top-summary">
+    <!-- Left: Welcome + Balance -->
+    <div>
+        <div class="welcome-text">Welcome back, <span th:text="${holderName}">Customer</span> 👋</div>
+        <div class="balance-box">
+            <p>Current Balance</p>
+            <div class="balance-amount">₹<span th:text="${balance}">0.00</span></div>
+        </div>
+    </div>
+
+    <!-- Right: Account Age -->
+    <div class="account-age">
+        <p>Account Age</p>
+        <div class="value" th:text="${accountAge}">0 years 0 months 0 days</div>
+    </div>
+</div>
+
+<!-- Action Cards -->
+<div class="cards-container">
+    <div class="card" role="region" aria-label="View Account Details">
+        <h3>View Account Details</h3>
+        <p>View detailed account information.</p>
+        <!-- CORRECT: Send accountNumber param to /account-details -->
+        <a th:href="@{'/account-details'(accountNumber=${accNumber})}" class="btn" aria-label="Open account details">Open</a>
+    </div>
+
+    <div class="card">
+        <h3>Recent Balance History</h3>
+        <p>View your balance changes for the last 10 days.</p>
+        <!-- This is already the dashboard; keep as button or wire to a real endpoint if you have one -->
+        <a th:href="@{'/balance-history'(accountNumber=${accNumber})}" class="btn">View</a>
+
+    </div>
+
+    <div class="card">
+        <h3>Transfer Money</h3>
+        <p>Send money to contacts or beneficiaries.</p>
+
+        <a th:href="@{'/transfer'(accountNumber=${accNumber})}" class="btn">Transfer ₹</a>
+    </div>
+
+    <div class="card">
+        <h3>Withdraw</h3>
+        <p>Move funds to another account.</p>
+        <a th:href="@{'/withdraw'(accountNumber=${accNumber})}" class="btn">Withdraw ₹</a>
+
+    </div>
+
+    <div class="card">
+        <h3>Deposit</h3>
+        <p>Add money via UPI, NEFT, or IMPS.</p>
+        <a th:href="@{'/deposit'(accountNumber=${accNumber})}" class="btn">
+            Deposit ₹
+        </a>
+
+
+    </div>
+
+    <div class="card">
+        <h3>Statements</h3>
+        <p>Download your monthly e-statements.</p>
+        <!-- CORRECT: Link includes accountNumber -->
+        <a th:href="@{'/statements'(accountNumber=${accNumber})}" class="btn" aria-label="Open statements">Open</a>
+    </div>
+    <div class="card">
+        <h3>Daily Spending Limit</h3>
+        <p>Set your maximum limit for withdrawal & transfer per day.</p>
+
+        <a th:href="@{'/daily-limit'(accountNumber=${accNumber})}" class="btn">
+            Manage Limit
+        </a>
+    </div>
+    <div class="card">
+        <h3>Freeze / Unfreeze Card</h3>
+        <p>Instantly lock or unlock your debit card for security.</p>
+
+        <a th:href="@{'/card-security'(accountNumber=${accNumber})}" class="btn">
+            Manage Card Lock
+        </a>
+    </div>
+
+    <div class="card">
+        <h3>Virtual Debit Card</h3>
+        <p>View your digital card details securely anytime.</p>
+
+        <a th:href="@{'/virtual-card'(accountNumber=${accNumber})}" class="btn">
+            View Card
+        </a>
+    </div>
+
+    <div class="card">
+        <h3>Apply Loan</h3>
+        <p>Quickly apply for personal, education, or home loans.</p>
+
+        <a th:href="@{'/loan/selection'(accountNumber=${accNumber})}" class="btn">
+            Apply Now
+        </a>
+    </div>
+    <div class="card">
+        <h3>Loan History</h3>
+        <p>View your past loan applications, status, and remarks.</p>
+        <a th:href="@{'/loan/history'(accountNumber=${accNumber})}" class="btn">
+            Loan History
+        </a>
+
+    </div>
+
+    <div class="card">
+        <h3>Raise Complaint</h3>
+        <p>Submit any issues or concerns regarding your account or transactions.</p>
+
+        <a th:href="@{'/raise-complaint'(accountNumber=${accNumber})}" class="btn">
+            Raise Complaint
+        </a>
+    </div>
+    <div class="card">
+        <h3>Complaint History</h3>
+        <p>View your previous complaints and replies.</p>
+
+        <a th:href="@{'/complaint-history'(accountNumber=${accNumber})}" class="btn">
+            View History
+        </a>
+    </div>
+
+    <div class="card">
+        <h3>Credit Score</h3>
+        <p>Check your personalized financial score.</p>
+        <a th:href="@{'/credit-score'(accountNumber=${accNumber})}" class="btn">View Score</a>
+    </div>
+    <div class="card">
+        <h3>Expense Analyzer</h3>
+        <p>Track your monthly spending with charts.</p>
+        <a th:href="@{'/expense-analysis'(accountNumber=${accNumber})}" class="btn">Analyze</a>
+    </div>
+
+
+</div>
+
+<footer>
+    © 2025 Nexa Bank. All Rights Reserved.
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Virtual Debit Card - Nexa Bank</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #f5f7fb;
+            text-align: center;
+        }
+
+        /* HEADER */
+        .navbar {
+            background-color: #0d1b3d;
+            color: #f7d65b;
+            padding: 18px 40px;
+            font-size: 24px;
+            font-weight: 700;
+            text-align: left;
+        }
+
+        /* Card Container */
+        .card-wrapper {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .card-container {
+            width: 420px;
+            background: #0d1b3d;
+            padding: 28px;
+            border-radius: 18px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            color: white;
+            text-align: left;
+        }
+
+        .bank-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #f7d65b;
+        }
+
+        .card-number {
+            margin-top: 30px;
+            font-size: 24px;
+            letter-spacing: 3px;
+        }
+
+        .label {
+            margin-top: 22px;
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .value {
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .bottom-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 22px;
+        }
+
+        .btn-toggle {
+            margin-top: 18px;
+            background: #ffffff25;
+            border: none;
+            padding: 10px 16px;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 20px;
+            background-color: #f7d65b;
+            color: #0d1b3d;
+            border-radius: 10px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+    </style>
+
+    <script>
+        function revealCard() {
+            let el = document.getElementById("cardNumber");
+            let masked = el.dataset.masked;
+            let full = el.dataset.full;
+
+            el.innerText = (el.innerText === masked) ? full : masked;
+        }
+
+        function revealCVV() {
+            let cvv = document.getElementById("cvv");
+            let real = cvv.dataset.real;
+
+            cvv.innerText = (cvv.innerText === "***") ? real : "***";
+        }
+    </script>
+</head>
+
+<body>
+
+<div class="navbar">NEXA BANK</div>
+
+<div class="card-wrapper">
+    <div class="card-container">
+
+        <div class="bank-title">VIRTUAL DEBIT CARD</div>
+
+        <!-- CARD NUMBER -->
+        <div class="card-number"
+             id="cardNumber"
+             th:data-masked="${maskedCard}"
+             th:data-full="${fullCard}"
+             th:text="${maskedCard}">
+        </div>
+
+        <!-- HOLDER -->
+        <div class="label">CARD HOLDER</div>
+        <div class="value" th:text="${holderName}"></div>
+
+        <div class="bottom-row">
+
+            <div>
+                <div class="label">VALID THRU</div>
+                <div class="value" th:text="${expiry}"></div>
+            </div>
+
+            <div>
+                <div class="label">CVV</div>
+                <div class="value" id="cvv" th:data-real="${cvv}">***</div>
+            </div>
+
+        </div>
+
+        <!-- UPI ID -->
+        <div class="label" style="margin-top: 25px;">UPI ID</div>
+        <div class="value" th:text="${upiId}"></div>
+
+        <!-- Buttons -->
+        <button class="btn-toggle" onclick="revealCard()">Show / Hide Card Number</button>
+        <button class="btn-toggle" onclick="revealCVV()">Show / Hide CVV</button>
+    </div>
+</div>
+
+<a th:href="@{'/dashboard'(accountNumber=${fullCard})}" class="btn-back">← Back to Dashboard</a>
+
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Complaint History - Nexa Bank</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f5f7fb;
+            color: #0d1b3d;
+        }
+
+        .navbar {
+            background-color: #0d1b3d;
+            color: #f7d65b;
+            padding: 15px 40px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .container {
+            width: 90%;
+            background: white;
+            margin: 30px auto;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th {
+            background-color: #0d1b3d;
+            color: #f7d65b;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #dbe3f5;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .pending {
+            background: #ffe9a8;
+            color: #946200;
+        }
+
+        .resolved {
+            background: #c3ffd3;
+            color: #006d2a;
+        }
+
+        .replied {
+            background: #cfe2ff;
+            color: #003e8a;
+        }
+
+        .back-btn {
+            background-color: #f7d65b;
+            padding: 10px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #0d1b3d;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">Complaint History</div>
+
+<div class="container">
+
+    <a th:href="@{'/dashboard'(accountNumber=${accountNumber})}" class="back-btn">← Back to Dashboard</a>
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Admin Reply</th>
+            <th>Date</th>
+        </tr>
+
+        <tr th:each="c : ${complaints}">
+            <td th:text="${c.id}"></td>
+            <td th:text="${c.type}"></td>
+            <td th:text="${c.description}"></td>
+
+            <td>
+                <span class="status-badge"
+                      th:classappend="
+          ${c.status} == 'Pending' ? ' pending' :
+          (${c.status} == 'Resolved' ? ' resolved' : ' replied')
+      "
+                      th:text="${c.status}">
+</span>
+
+            </td>
+
+            <td th:text="${c.adminReply != null ? c.adminReply : 'No reply yet'}"></td>
+
+            <td th:text="${#temporals.format(c.createdAt, 'dd-MM-yyyy HH:mm')}"></td>
+        </tr>
+
+    </table>
+</div>
+
+</body>
+</html>

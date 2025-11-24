@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create Account - Nexa Bank</title>
+
+    <!-- Font Awesome for Eye Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        body{
+            background: linear-gradient(to right,#0d1b3d,#1d3a73);
+            display:flex;justify-content:center;align-items:center;height:100vh;
+            font-family:Segoe UI,sans-serif;color:#0d1b3d;
+            padding:0;margin:0;
+        }
+        .box{
+            background:#fff;padding:35px;border-radius:15px;
+            width:500px;       /* FIXED equal size width */
+            box-shadow:0px 0px 30px rgba(255,215,0,0.3);
+        }
+        input,select{
+            width:100%;
+            padding:12px;
+            margin-top:14px;
+            border-radius:8px;
+            border:1px solid #aaa;
+            font-size:15px;
+            box-sizing:border-box; /* Prevents size changes */
+        }
+        button{
+            width:100%;margin-top:22px;padding:14px;background:#f7d65b;border:0;
+            border-radius:8px;font-size:18px;font-weight:600;cursor:pointer;
+        }
+        .msg{margin-top:12px;text-align:center;font-weight:600;}
+        .pin-wrapper{
+            position:relative;
+        }
+        .toggle-eye{
+            position:absolute;
+            right:12px;
+            top:50%;
+            transform:translateY(-50%);
+            cursor:pointer;
+            font-size:18px;
+            color:#555;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2 style="text-align:center;font-size:28px;font-weight:700;">Open New Account</h2>
+
+    <form th:action="@{/major/send-otp}" th:object="${account}" method="post">
+    <!-- Name - Only Letters Allowed -->
+        <input type="text" th:field="*{holderName}" placeholder="Full Name"
+               required pattern="[A-Za-z ]+" title="Only letters and spaces allowed">
+
+        <!-- Email -->
+        <input type="email" th:field="*{email}" placeholder="Email" required>
+
+        <!-- Phone Number -->
+        <input type="text" th:field="*{phoneNumber}" placeholder="Phone Number"
+               required pattern="[0-9]{10}" maxlength="10" title="Enter 10 digit mobile number only">
+
+        <!-- DOB (No label) -->
+        <input type="date" th:field="*{dob}" required>
+
+        <!-- Account Type -->
+        <select th:field="*{accountType}">
+            <option value="" disabled selected>Select Account Type</option>
+            <option value="Savings">Savings Account</option>
+            <option value="Current">Current Account</option>
+            <option value="Salary">Salary Account</option>
+        </select>
+
+
+        <!-- Branch -->
+        <select th:field="*{branchName}">
+            <option value="" disabled selected>Select Branch</option>
+            <option value="Chennai - Tambaram">Chennai - Tambaram</option>
+            <option value="Bangalore - Whitefield">Bangalore - Whitefield</option>
+            <option value="Mumbai - Andheri">Mumbai - Andheri</option>
+            <option value="Delhi - Rohini">Delhi - Rohini</option>
+        </select>
+        <!-- Gender Selection -->
+        <select th:field="*{gender}" required>
+            <option value="" disabled selected>Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Others">Others</option>
+        </select>
+
+        <!-- Address -->
+        <input type="text" th:field="*{address}" placeholder="Address"
+               required minlength="5" maxlength="200"
+               title="Enter a valid address">
+
+        <!-- Aadhar Number - Only 12 digits -->
+        <input type="text" th:field="*{aadharNumber}" placeholder="Aadhar Number"
+               required pattern="[0-9]{12}" maxlength="12"
+               title="Enter 12-digit Aadhar number only (no spaces)">
+
+
+        <!-- PIN with Correct Eye Toggle -->
+        <div class="pin-wrapper">
+            <input type="password" id="pinInput" th:field="*{pin}" placeholder="Set 4-digit PIN"
+                   required pattern="[0-9]{4}" maxlength="4" title="Enter 4 digits only">
+            <!-- Start with eye (not eye-slash) -->
+            <i class="fa-solid fa-eye toggle-eye" id="togglePinIcon" onclick="togglePin()"></i>
+        </div>
+        <button type="submit">Create Account</button>
+    </form>
+
+    <p class="msg" th:if="${error}" th:text="${error}" style="color:red;"></p>
+    <p class="msg" th:if="${success}" th:text="${success}" style="color:green;"></p>
+
+</div>
+
+<script>
+    window.onload = function () {
+        let pinField = document.getElementById("pinInput");
+        let icon = document.getElementById("togglePinIcon");
+
+        // Force hidden on load
+        pinField.type = "password";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+    };
+
+    function togglePin() {
+        let pinField = document.getElementById("pinInput");
+        let icon = document.getElementById("togglePinIcon");
+
+        if (pinField.type === "password") {
+            pinField.type = "text";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        } else {
+            pinField.type = "password";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        }
+    }
+</script>
+
+</body>
+</html>

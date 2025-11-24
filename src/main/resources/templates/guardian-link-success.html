@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Guardian Linked Successfully</title>
+    <style>
+        body{
+            background:linear-gradient(to right,#0d1b3d,#1d3a73);
+            height:100vh;margin:0;
+            display:flex;justify-content:center;align-items:center;
+            font-family:Segoe UI,sans-serif;color:#0d1b3d;
+        }
+        .box{
+            background:#fff;width:480px;padding:32px;
+            border-radius:16px;box-shadow:0 0 30px rgba(255,215,0,.3);
+            text-align:center;
+        }
+        button{
+            width:100%;padding:14px;margin-top:18px;
+            background:#f7d65b;border:0;border-radius:8px;
+            font-size:18px;font-weight:600;cursor:pointer;
+        }
+        button:hover{background:#ffd74b;}
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>✅ Guardian Verified Successfully</h2>
+    <p>The minor account has been linked with the guardian account.</p>
+
+    <form th:action="@{/minor/send-minor-otp}" method="post">
+        <input type="hidden" name="minorEmail" th:value="${minorEmail}">
+        <button type="submit">Continue</button>
+    </form>
+</div>
+
+</body>
+</html>

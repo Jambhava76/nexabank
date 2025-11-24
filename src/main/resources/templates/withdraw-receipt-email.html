@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial; }
+        .box {
+            padding: 20px;
+            border-left: 5px solid #0d1b3d;
+            background: #ffffff;
+        }
+        h2 { color: #0d1b3d; }
+        p { font-size: 14px; }
+    </style>
+</head>
+<body>
+<div class="box">
+    <h2>Nexa Bank - Withdrawal Receipt</h2>
+
+    <p><b>Transaction ID:</b> [[${transactionId}]]</p>
+    <p><b>Date:</b> [[${date}]]</p>
+    <p><b>Time:</b> [[${time}]]</p>
+    <p><b>Account Number:</b> [[${accountNumber}]]</p>
+    <p><b>Holder Name:</b> [[${holderName}]]</p>
+    <p><b>Amount Withdrawn:</b> ₹[[${amount}]]</p>
+    <p><b>Reason:</b> [[${reason}]]</p>
+    <p><b>New Balance:</b> ₹[[${updatedBalance}]]</p>
+</div>
+</body>
+</html>

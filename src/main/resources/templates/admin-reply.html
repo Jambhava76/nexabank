@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reply to Complaint - Nexa Bank</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #0d1b3d;
+            font-family: 'Segoe UI', sans-serif;
+            color: white;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: #0b1533;
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.4);
+        }
+
+        .logo {
+            color: #f5c542;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .back-btn {
+            background: #f5c542;
+            color: #0d1b3d;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: #ffe27a;
+            transform: scale(1.05);
+        }
+
+        /* CENTER CONTAINER */
+        .container {
+            width: 60%;
+            margin: 40px auto;
+            background: #11265a;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            color: #f5c542;
+            margin-bottom: 25px;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .label {
+            color: #f5c542;
+            font-weight: 700;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+
+        .btn {
+            background-color: #f7d65b;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #0d1b3d;
+            margin-top: 15px;
+        }
+
+        .btn:hover {
+            background-color: #ffe27a;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <div class="logo">NEXA BANK</div>
+    <a class="back-btn" href="/admin/complaints">← Back</a>
+</div>
+
+<!-- MAIN REPLY FORM BOX -->
+<div class="container">
+
+    <h2>Reply to Complaint</h2>
+
+    <p><span class="label">Complaint ID:</span> <span th:text="${complaint.id}"></span></p>
+    <p><span class="label">Account Number:</span> <span th:text="${complaint.accountNumber}"></span></p>
+    <p><span class="label">Type:</span> <span th:text="${complaint.type}"></span></p>
+    <p><span class="label">Description:</span> <span th:text="${complaint.description}"></span></p>
+
+    <form action="/admin/send-reply" method="post">
+        <input type="hidden" name="id" th:value="${complaint.id}">
+
+        <label class="label">Reply Message:</label>
+        <textarea name="reply" rows="5" required></textarea>
+
+        <button type="submit" class="btn">Send Reply</button>
+    </form>
+</div>
+
+</body>
+</html>

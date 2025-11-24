@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Loan Application – Nexa Bank</title>
+
+    <!-- Optional: reference to uploaded asset (developer-provided local path):
+         /mnt/data/9378249f-4cba-4a38-b834-2a410eb02f1a.png
+    -->
+
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+        :root{
+            --nav-blue:#0d1b3d;
+            --gold:#f7d65b;
+            --muted:#607299;
+            --bg:#f4f7fc;
+            --error-red:#d9534f;
+            --input-border:#d0d7e6;
+            --radius:10px;
+        }
+
+        /* Reset / base */
+        *{box-sizing:border-box}
+        body{
+            background:var(--bg);
+            font-family:'Segoe UI',sans-serif;
+            margin:0;
+            color: #0d1b3d;
+        }
+
+        .navbar{
+            background:var(--nav-blue);
+            padding:14px 28px;
+            color:var(--gold);
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            font-size:20px;
+            font-weight:800;
+        }
+        .navbar a{
+            font-size:16px;
+            background:var(--gold);
+            color:var(--nav-blue);
+            padding:8px 12px;
+            text-decoration:none;
+            font-weight:700;
+            border-radius:8px;
+        }
+
+        .container{
+            width:min(920px,96%);
+            margin:30px auto 60px;
+            background:white;
+            padding:28px;
+            border-radius:14px;
+            box-shadow:0 8px 30px rgba(0,0,0,0.08);
+        }
+
+        h2{ color:var(--nav-blue); margin:0 0 6px; font-size:26px; }
+        .subtitle{ color:var(--muted); margin:0 0 18px; }
+
+        form .form-row { margin-bottom:14px; }
+        label{
+            display:block;
+            font-weight:700;
+            color:#0d1b3d;
+            margin-bottom:8px;
+            font-size:14px;
+        }
+
+        input[type="text"], input[type="number"], select, textarea {
+            width:100%;
+            padding:12px 14px;
+            border:2px solid var(--input-border);
+            border-radius:var(--radius);
+            background: #fff;
+            font-size:15px;
+            outline: none;
+            transition: border-color .12s, box-shadow .12s;
+        }
+        input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
+            border-color: var(--nav-blue);
+            box-shadow: 0 4px 18px rgba(13,27,61,0.06);
+        }
+
+        /* Inline error style (Style 3) */
+        .is-error {
+            border-color: var(--error-red) !important;
+            box-shadow: 0 6px 18px rgba(217,83,79,0.08);
+        }
+        .field-error {
+            display:block;
+            margin-top:6px;
+            color:var(--error-red);
+            font-size:13px;
+            font-weight:700;
+        }
+
+        .hint {
+            display:block;
+            margin-top:6px;
+            color:var(--muted);
+            font-size:13px;
+            font-weight:600;
+        }
+
+        /* Buttons row */
+        .button-row {
+            margin-top:18px;
+            display:flex;
+            gap:12px;
+        }
+        .btn {
+            padding:12px 18px;
+            border-radius:10px;
+            font-weight:800;
+            font-size:16px;
+            cursor:pointer;
+            border: none;
+        }
+        .btn-calc {
+            flex:1;
+            background:var(--nav-blue);
+            color:white;
+        }
+        .btn-calc:hover { background:#122552; }
+
+        .btn-submit {
+            flex:1;
+            background:var(--gold);
+            color:var(--nav-blue);
+        }
+        .btn-submit:hover { background:#ffd84d; }
+
+        .btn-download {
+            margin-top:14px;
+            display:block;
+            width:100%;
+            background:var(--nav-blue);
+            color:white;
+            padding:12px;
+            border-radius:10px;
+            font-weight:800;
+            font-size:16px;
+            text-align:center;
+            border:none;
+            cursor:pointer;
+        }
+        .btn-download:hover { background:#122552; }
+
+        /* EMI box appears under buttons */
+        .emi-box {
+            display:none;
+            margin-top:14px;
+            background:#fff8d4;
+            border-left:5px solid #c9a500;
+            padding:12px;
+            border-radius:8px;
+            font-weight:700;
+            color:#0d1b3d;
+        }
+
+        /* top page inline error banner (if needed) */
+        .top-error {
+            display:none;
+            background:#ffecec;
+            border-left:5px solid var(--error-red);
+            padding:10px 12px;
+            border-radius:8px;
+            color:var(--error-red);
+            font-weight:700;
+            margin-bottom:12px;
+        }
+
+        /* Make small text consistent */
+        small { display:block; color:var(--muted); margin-top:6px; font-weight:600; }
+
+        /* Responsive */
+        @media (max-width:600px){
+            .button-row{ flex-direction:column; }
+        }
+    </style>
+
+    <!-- libraries for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    NEXA BANK
+    <a th:href="@{'/loan/selection'(accountNumber=${accountNumber})}">← Back</a>
+
+</div>
+
+<div class="container" id="loanFormArea">
+
+    <h2>Loan Application</h2>
+    <div class="subtitle">
+        Fill your details to continue. Loan Type:
+        <strong th:text="${loanType}"></strong>
+    </div>
+
+    <div id="topError" class="top-error" role="alert"></div>
+
+    <form id="loanForm"
+          th:action="@{'/loan/submit-application'(accountNumber=${accountNumber})}"
+          method="post" novalidate>
+
+
+    <!-- Hidden: loan type, credit score provided by your controller -->
+        <input type="hidden" name="loanType" th:value="${loanType}">
+        <input type="hidden" id="creditScore" th:value="${creditScore}">
+        <input type="hidden" id="interestRate" name="interestRate">
+
+        <!-- Loan Amount -->
+        <div class="form-row">
+            <label for="loanAmount">Loan Amount (₹)</label>
+            <input id="loanAmount" name="amount" type="text" placeholder="Enter amount (min ₹25,000)" aria-describedby="loanAmountHint" autocomplete="off" />
+
+            <small id="loanAmountHint">Only digits allowed. Minimum ₹25,000.</small>
+            <span id="loanAmountError" class="field-error" aria-live="polite" style="display:none;"></span>
+        </div>
+
+        <!-- Tenure -->
+        <div class="form-row">
+            <label for="tenure">Tenure (Months)</label>
+            <select id="tenure" name="tenure" required>
+                <option value="12">12 Months</option>
+                <option value="24">24 Months</option>
+                <option value="36">36 Months</option>
+                <option value="48">48 Months</option>
+                <option value="60">60 Months</option>
+            </select>
+            <span id="tenureError" class="field-error" style="display:none;"></span>
+        </div>
+
+        <!-- Monthly Income (optional) -->
+        <div class="form-row">
+            <label for="income">Monthly Income (₹) <em>(optional)</em></label>
+            <input id="income" name="income" type="text" placeholder="Optional" autocomplete="off" />
+            <small>Optional — helps with approval. Leave blank if you prefer.</small>
+            <span id="incomeError" class="field-error" style="display:none;"></span>
+        </div>
+
+        <!-- Employment -->
+        <div class="form-row">
+            <label for="employment">Employment Type</label>
+            <select id="employment" name="employment" required>
+                <option>Salaried</option>
+                <option>Self Employed</option>
+                <option>Business Owner</option>
+                <option>Student</option>
+            </select>
+            <span id="employmentError" class="field-error" style="display:none;"></span>
+        </div>
+
+        <!-- PAN -->
+        <div class="form-row">
+            <label for="pan">PAN Number</label>
+            <input id="pan" name="pan" type="text" maxlength="10" placeholder="Eg: ABCDE1234F" autocomplete="off" />
+            <small>PAN: exactly 10 alpha-numeric characters (no spaces).</small>
+            <span id="panError" class="field-error" style="display:none;"></span>
+        </div>
+
+        <!-- Address -->
+        <div class="form-row">
+            <label for="address">Address</label>
+            <input id="address" name="address" type="text" autocomplete="off" />
+            <span id="addressError" class="field-error" style="display:none;"></span>
+        </div>
+
+        <!-- Buttons -->
+        <div class="button-row">
+            <button type="button" id="btnCalc" class="btn btn-calc">Calculate EMI</button>
+            <button type="submit" id="btnSubmit" class="btn btn-submit">Submit Application</button>
+        </div>
+
+        <!-- EMI Box (below buttons) -->
+        <div id="emiBox" class="emi-box" aria-live="polite">
+            <div><strong>Estimated EMI:</strong> ₹<span id="emiValue">0</span> / month</div>
+            <div style="margin-top:6px;"><strong>Interest Rate Applied:</strong> <span id="rateApplied">—</span>%</div>
+        </div>
+
+        <!-- Download PDF preview -->
+        <button type="button" id="btnDownload" class="btn-download">Download PDF (Preview)</button>
+
+    </form>
+</div>
+
+<script>
+    // ======= Utility & Validation Helpers =======
+    function $(id){ return document.getElementById(id); }
+
+    function setError(inputEl, errorElId, message){
+        inputEl.classList.add('is-error');
+        const e = $(errorElId);
+        e.innerText = message;
+        e.style.display = 'block';
+    }
+    function clearError(inputEl, errorElId){
+        inputEl.classList.remove('is-error');
+        const e = $(errorElId);
+        e.innerText = '';
+        e.style.display = 'none';
+    }
+
+    // Input elements
+    const loanAmountEl = $('loanAmount');
+    const tenureEl = $('tenure');
+    const incomeEl = $('income');
+    const panEl = $('pan');
+    const employmentEl = $('employment');
+    const addressEl = $('address');
+    const creditScoreEl = $('creditScore'); // hidden, provided by controller
+    const interestRateEl = $('interestRate');
+
+    const emiBox = $('emiBox');
+    const emiValue = $('emiValue');
+    const rateApplied = $('rateApplied');
+    const topError = $('topError');
+
+    // live validation: regex patterns
+    const digitsOnly = /^[0-9]+$/;
+    const panPattern = /^[A-Za-z0-9]{10}$/;
+
+    // get auto interest rate from credit score
+    function getAutoRate(score){
+        score = parseInt(score) || 0;
+        if(score >= 750) return 9;
+        if(score >= 600) return 12;
+        return 15;
+    }
+
+    // ======= Live field validation handlers (Style 3: red border + small message) =======
+    loanAmountEl.addEventListener('input', function(){
+        const v = this.value.trim();
+        // remove non-digit characters automatically (user typing)
+        // but keep we allow user to clear; we will not force rewrite if blank
+        if(v === '') {
+            clearError(this, 'loanAmountError');
+            return;
+        }
+        if(!digitsOnly.test(v)){
+            setError(this, 'loanAmountError', 'Loan amount must contain digits only.');
+            return;
+        }
+        if(parseInt(v, 10) < 25000){
+            setError(this, 'loanAmountError', 'Loan amount must be at least ₹25,000.');
+            return;
+        }
+        clearError(this, 'loanAmountError');
+    });
+
+    incomeEl.addEventListener('input', function(){
+        const v = this.value.trim();
+        if(v === ''){
+            clearError(this, 'incomeError');
+            return;
+        }
+        if(!digitsOnly.test(v)){
+            setError(this, 'incomeError', 'Monthly income must contain digits only (or leave blank).');
+            return;
+        }
+        clearError(this, 'incomeError');
+    });
+
+    panEl.addEventListener('input', function(){
+        const v = this.value.trim();
+        if(v === ''){
+            setError(this, 'panError', 'PAN is required.');
+            return;
+        }
+        if(!panPattern.test(v)){
+            setError(this, 'panError', 'PAN must be exactly 10 alphanumeric characters (no spaces).');
+            return;
+        }
+        clearError(this, 'panError');
+    });
+
+    addressEl.addEventListener('input', function(){
+        const v = this.value.trim();
+        if(v === ''){
+            setError(this, 'addressError', 'Address is required.');
+            return;
+        }
+        clearError(this, 'addressError');
+    });
+
+    employmentEl.addEventListener('change', function(){
+        clearError(this, 'employmentError');
+    });
+
+    tenureEl.addEventListener('change', function(){
+        clearError(this, 'tenureError');
+    });
+
+    // ======= EMI Calculation (realistic formula) =======
+    document.getElementById('btnCalc').addEventListener('click', function(){
+        // clear top banner
+        topError.style.display = 'none';
+
+        // validate loan amount quickly
+        const amt = loanAmountEl.value.trim();
+        if(!digitsOnly.test(amt)){
+            setError(loanAmountEl, 'loanAmountError', 'Loan amount must contain digits only.');
+            loanAmountEl.focus();
+            return;
+        }
+        if(parseInt(amt,10) < 25000){
+            setError(loanAmountEl, 'loanAmountError', 'Loan amount must be at least ₹25,000.');
+            loanAmountEl.focus();
+            return;
+        }
+
+        // determine rate from credit score
+        const score = creditScoreEl.value ? parseInt(creditScoreEl.value) : 0;
+        const rate = getAutoRate(score);
+        interestRateEl.value = rate;
+
+        // compute EMI
+        const principal = parseFloat(amt);
+        const months = parseInt(tenureEl.value, 10);
+        const r = rate/12/100;
+        // EMI formula
+        const emi = (principal * r * Math.pow(1+r, months)) / (Math.pow(1+r, months) - 1);
+
+        emiValue.innerText = emi.toFixed(2);
+        rateApplied.innerText = rate;
+        emiBox.style.display = 'block';
+        // focus on the EMI box for accessibility
+        emiBox.scrollIntoView({behavior:'smooth', block:'center'});
+    });
+
+    // ======= Form submit validation (final check before sending) =======
+    document.getElementById('loanForm').addEventListener('submit', function(ev){
+        // clear top error
+        topError.style.display = 'none';
+
+        // run validations (same as live)
+        let hasError = false;
+
+        // loan amount
+        const amt = loanAmountEl.value.trim();
+        if(!digitsOnly.test(amt)){
+            setError(loanAmountEl, 'loanAmountError', 'Loan amount must contain digits only.');
+            hasError = true;
+        } else if(parseInt(amt,10) < 25000) {
+            setError(loanAmountEl, 'loanAmountError', 'Loan amount must be at least ₹25,000.');
+            hasError = true;
+        } else {
+            clearError(loanAmountEl, 'loanAmountError');
+        }
+
+        // pan
+        const panv = panEl.value.trim();
+        if(!panPattern.test(panv)){
+            setError(panEl, 'panError', 'PAN must be exactly 10 alphanumeric characters.');
+            hasError = true;
+        } else {
+            clearError(panEl, 'panError');
+        }
+
+        // address
+        const addr = addressEl.value.trim();
+        if(addr === ''){
+            setError(addressEl, 'addressError', 'Address is required.');
+            hasError = true;
+        } else {
+            clearError(addressEl, 'addressError');
+        }
+
+        // income (optional)
+        const inc = incomeEl.value.trim();
+        if(inc !== '' && !digitsOnly.test(inc)){
+            setError(incomeEl, 'incomeError', 'Monthly income must be digits only or left blank.');
+            hasError = true;
+        } else {
+            clearError(incomeEl, 'incomeError');
+        }
+
+        if(hasError){
+            // show a small top error banner too
+            topError.innerText = 'Please fix the errors highlighted below.';
+            topError.style.display = 'block';
+            // prevent submit
+            ev.preventDefault();
+            topError.scrollIntoView({behavior:'smooth', block:'center'});
+            return false;
+        }
+
+        // ensure EMI was calculated (optional requirement)
+        // If you want to require EMI calc before submit, uncomment:
+        // if(emiBox.style.display !== 'block'){ showTopError('Please calculate EMI before submitting.'); ev.preventDefault(); return false; }
+
+        // otherwise allow form submission to backend
+        return true;
+    });
+
+    // ======= Simple PDF (preview) using html2canvas + jsPDF =======
+    document.getElementById('btnDownload').addEventListener('click', async function(){
+        // small validation before building preview
+        const amt = loanAmountEl.value.trim();
+        if(!digitsOnly.test(amt) || parseInt(amt,10) < 25000){
+            topError.innerText = 'Enter a valid loan amount (min ₹25,000) before downloading preview.';
+            topError.style.display = 'block';
+            loanAmountEl.focus();
+            return;
+        }
+
+        // create a copy of the form area to render (so buttons don't appear)
+        const area = document.getElementById('loanFormArea');
+        // temporarily hide buttons for screenshot
+        const btns = area.querySelectorAll('button');
+        btns.forEach(b=>b.style.visibility = 'hidden');
+
+        // Use html2canvas
+        try {
+            const canvas = await html2canvas(area, {scale:2, backgroundColor: '#ffffff'});
+            const imgData = canvas.toDataURL('image/png');
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'pt', 'a4');
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const imgProps = pdf.getImageProperties(imgData);
+            const imgHeight = (imgProps.height * pageWidth) / imgProps.width;
+            pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, imgHeight);
+            pdf.save('NexaLoanApplication_Preview.pdf');
+        } catch(err){
+            topError.innerText = 'Failed to create PDF preview: ' + (err && err.message ? err.message : err);
+            topError.style.display = 'block';
+        } finally {
+            // restore visibility
+            btns.forEach(b=>b.style.visibility = 'visible');
+        }
+    });
+
+    // Accessibility: hide top error when user fixes inputs
+    const allInputs = [loanAmountEl, tenureEl, incomeEl, panEl, employmentEl, addressEl];
+    allInputs.forEach(el => {
+        el.addEventListener('input', function(){ topError.style.display = 'none'; });
+        el.addEventListener('change', function(){ topError.style.display = 'none'; });
+    });
+
+    // Initialize: hide emi box/top error by default
+    emiBox.style.display = 'none';
+    topError.style.display = 'none';
+</script>
+
+</body>
+</html>

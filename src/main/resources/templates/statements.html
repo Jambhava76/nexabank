@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Monthly Statement - Nexa Bank</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f7fb;
+            color: #0d1b3d;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background-color: #0d1b3d;
+            color: #f7d65b;
+            padding: 20px 40px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 85%;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.12);
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0d1b3d;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #465a89;
+            margin-bottom: 25px;
+        }
+
+        /* TABLE */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+        }
+
+        thead {
+            background-color: #0d1b3d;
+            color: #f7d65b;
+            font-weight: bold;
+        }
+
+        th, td {
+            padding: 14px;
+            border-bottom: 1px solid #d9dff2;
+            font-size: 15px;
+            text-align: left;
+        }
+
+        tr:hover {
+            background: #f0f4ff;
+        }
+
+        /* Amount Colors */
+        .credit {
+            color: #0a7b0a;
+            font-weight: 700;
+        }
+
+        .debit {
+            color: #c20000;
+            font-weight: 700;
+        }
+
+        .txid {
+            font-size: 13px;
+            color: #777;
+        }
+
+        /* Back Button */
+        .btn-back {
+            display: inline-block;
+            padding: 12px 18px;
+            margin-top: 25px;
+            background-color: #0d1b3d;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .btn-back:hover {
+            background-color: #13306c;
+        }
+
+        /* Download button */
+        .download-btn {
+            padding: 12px 18px;
+            background-color: #f7d65b;
+            color: #0d1b3d;
+            border-radius: 8px;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            margin-bottom: 20px;
+        }
+
+        .download-btn:hover {
+            background-color: #ffea83;
+        }
+    </style>
+
+    <!-- PDF DOWNLOAD LIBRARIES -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+        async function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+
+            const content = document.querySelector(".container");
+
+            const canvas = await html2canvas(content, { scale: 2 });
+            const imgData = canvas.toDataURL("image/png");
+
+            const pdf = new jsPDF("p", "pt", "a4");
+
+            let width = pdf.internal.pageSize.getWidth() - 30;
+            let height = (canvas.height * width) / canvas.width;
+
+            pdf.addImage(imgData, "PNG", 15, 15, width, height);
+
+            pdf.save("NexaBank_Monthly_Statement.pdf");
+        }
+    </script>
+</head>
+
+<body>
+
+<div class="navbar">NEXA BANK - Monthly Statement</div>
+
+<div class="container">
+
+    <div class="title">Statement for <span th:text="${holderName}"></span></div>
+    <div class="subtitle">Account Number: <b th:text="${accountNumber}"></b></div>
+
+    <!-- DOWNLOAD BUTTON -->
+    <button class="download-btn" onclick="downloadPDF()">⬇ Download Monthly Statement (PDF)</button>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>TXN ID</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Balance After</th>
+            <th>Recipient / Sender</th>
+            <th>Remarks</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="tx : ${transactions}">
+            <td th:text="${#temporals.format(tx.createdAt, 'dd-MM-yyyy HH:mm')}"></td>
+
+            <td>
+                <span class="txid" th:text="${tx.transactionId}"></span>
+            </td>
+
+            <td th:text="${tx.type}"></td>
+
+            <!-- GREEN credit / RED debit -->
+            <td th:class="${tx.type == 'DEPOSIT' or (tx.receiverAccountNumber == accountNumber)} ? 'credit' : 'debit'">
+                ₹<span th:text="${tx.amount}"></span>
+            </td>
+
+            <td th:text="'₹' + ${tx.balanceAfter}"></td>
+
+            <!-- RECIPIENT / SENDER COLUMN -->
+            <td>
+                <span th:if="${tx.type == 'TRANSFER' and tx.senderAccountNumber == accountNumber}"
+                      th:text="'Sent to: ' + ${tx.receiverAccountNumber}"></span>
+
+                <span th:if="${tx.type == 'TRANSFER' and tx.receiverAccountNumber == accountNumber}"
+                      th:text="'Received from: ' + ${tx.senderAccountNumber}"></span>
+
+                <span th:if="${tx.type != 'TRANSFER'}">—</span>
+            </td>
+
+            <td th:text="${tx.reason} ?: '—'"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a th:href="@{'/dashboard'(accountNumber=${accountNumber})}" class="btn-back">← Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>

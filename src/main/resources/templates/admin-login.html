@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Login - Nexa Bank</title>
+
+    <style>
+        body {
+            background: linear-gradient(to right, #0d1b3d, #1d3a73);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .login-container {
+            width: 450px;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 0 25px rgba(255,255,255,0.25);
+            text-align: center;
+        }
+
+        h2 {
+            color: #0d1b3d;
+            font-weight: 700;
+            margin-bottom: 25px;
+        }
+
+        /* labels behave like customer page */
+        label {
+            display: block;
+            text-align: left;
+            font-size: 14px;
+            color: #0d1b3d;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #bfbfbf;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        input:disabled {
+            background: #eeeeee;
+        }
+
+        /* Show Password row – like Show PIN */
+        .show-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: -8px;
+            margin-bottom: 18px;
+        }
+
+        .show-row input {
+            width: auto;
+            margin: 0;
+        }
+
+        .show-row span {
+            font-size: 14px;
+            color: #0d1b3d;
+        }
+
+        /* Captcha line aligned to the right like customer */
+        .captcha-row {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+      .captcha-box {
+    background: #0d1b3d;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 3px;
+}
+
+
+        .reload {
+            font-size: 20px;
+            cursor: pointer;
+            color: #0d1b3d;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            font-size: 18px;
+            background: #f5c542;
+            border: none;
+            color: #0d1b3d;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        button:hover {
+            background: #e1b336;
+        }
+
+        .error {
+            color: red;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <h2>Admin Login</h2>
+
+    <!-- error msg from backend -->
+    <p class="error" th:if="${error}" th:text="${error}"></p>
+
+    <form id="adminForm" method="post" action="/admin/login">
+
+        <!-- Admin ID -->
+        <label for="adminId">Admin ID</label>
+        <input type="text" id="adminId" name="adminId" placeholder="Enter Admin ID" required>
+
+        <!-- Password -->
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password"
+               placeholder="Enter Password" disabled required>
+
+        <!-- Show Password (same style as Show PIN) -->
+        <div class="show-row">
+            <input type="checkbox" id="showPass" onclick="togglePassword()">
+            <span>Show Password</span>
+        </div>
+
+        <!-- CAPTCHA -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <label style="margin: 0;">Enter CAPTCHA</label>
+
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span id="captchaText" class="captcha-box"></span>
+                <span class="reload" onclick="generateCaptcha()">🔄</span>
+            </div>
+        </div>
+
+        <input type="text" id="captchaInput" name="captchaInput" placeholder="Enter CAPTCHA Here" required>
+
+
+        <button type="submit">Login</button>
+    </form>
+
+</div>
+
+<script>
+    // Enable password only when Admin ID length > 5
+    document.getElementById("adminId").addEventListener("input", function () {
+        const adminId = this.value.trim();
+        const passwordField = document.getElementById("password");
+        passwordField.disabled = adminId.length < 6;
+    });
+
+    // Show/Hide password
+    function togglePassword() {
+        const field = document.getElementById("password");
+        field.type = field.type === "password" ? "text" : "password";
+    }
+
+    // Generate CAPTCHA
+    function generateCaptcha() {
+        const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        let captcha = "";
+        for (let i = 0; i < 6; i++) {
+            captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        document.getElementById("captchaText").innerHTML = captcha;
+    }
+    generateCaptcha();
+
+    // Check CAPTCHA before sending to backend
+    document.getElementById("adminForm").addEventListener("submit", function (e) {
+        const captcha = document.getElementById("captchaText").innerHTML;
+        const input = document.getElementById("captchaInput").value.trim();
+
+        if (captcha !== input) {
+            e.preventDefault();
+            alert("Incorrect CAPTCHA!");
+            generateCaptcha();
+        }
+    });
+</script>
+
+</body>
+</html>

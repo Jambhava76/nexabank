@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nexa Bank - Admin Dashboard</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #0d1b3d;
+            color: white;
+        }
+
+        /* TOP NAV */
+        .navbar {
+            background: #0b1533;
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.4);
+        }
+
+        .navbar h2 {
+            color: #f5c542;
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .logout-btn {
+            background: #f5c542;
+            color: #0d1b3d;
+            padding: 10px 20px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #d9ad39;
+        }
+
+        /* DASHBOARD CONTENT */
+        .container {
+            padding: 40px;
+        }
+
+        .welcome-text {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        /* CARDS */
+        .card-row {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: #11265a;
+            padding: 25px;
+            width: 250px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.35);
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            background: #13316f;
+        }
+
+        .card h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #f5c542;
+        }
+
+        .card p {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        /* ACTION BOXES */
+        .actions-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #f5c542;
+        }
+
+        .action-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+        }
+
+        .action-box {
+            background: #1a2f55;
+            padding: 25px;
+            border-radius: 15px;
+            color: white;
+            text-align: left;
+            box-shadow: 0 0 20px rgba(0,0,0,0.35);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .action-box:hover {
+            background: #243c6d;
+            transform: translateY(-6px);
+        }
+
+        .action-box h4 {
+            margin: 0 0 10px;
+            font-size: 18px;
+            color: #f5c542;
+        }
+
+        .action-box p {
+            margin: 0;
+            opacity: 0.8;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAV BAR -->
+<div class="navbar">
+    <h2>Nexa Bank Admin Panel</h2>
+
+    <form method="get" action="/admin/logout">
+        <button class="logout-btn">Logout</button>
+    </form>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="container">
+
+    <div class="welcome-text">Welcome, <span th:text="${loggedAdmin.fullName}"></span> 👋</div>
+
+    <!-- DASHBOARD SUMMARY CARDS -->
+    <div class="card-row">
+
+        <div class="card">
+            <h3>Total Accounts</h3>
+            <p th:text="${totalAccounts}">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Active Accounts</h3>
+            <p th:text="${activeAccounts}">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Frozen Accounts</h3>
+            <p th:text="${frozenAccounts}">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Total Transactions</h3>
+            <p th:text="${transactionCount}">0</p>
+        </div>
+
+    </div>
+
+    <!-- ACTIONS SECTION -->
+    <div class="actions-title">Admin Actions</div>
+
+    <div class="action-row">
+
+        <div class="action-box" onclick="location.href='/admin/accounts'">
+            <h4>View All Accounts</h4>
+            <p>See all customer accounts</p>
+        </div>
+
+        <div class="action-box" onclick="location.href='/admin/transactions'">
+            <h4>View Transactions</h4>
+            <p>Review and audit transactions</p>
+        </div>
+        <div class="action-box" onclick="location.href='/admin/complaints'">
+            <h4>View Complaints</h4>
+            <p>Check, reply, and manage customer complaints</p>
+        </div>
+
+        <div class="action-box" onclick="location.href='/admin/freeze-account'">
+            <h4>Freeze/Unfreeze Account</h4>
+            <p>Secure accounts when needed</p>
+        </div>
+
+        <div class="action-box" onclick="location.href='/admin/reports'">
+            <h4>Generate Reports</h4>
+            <p>Download PDF/CSV summaries</p>
+        </div>
+        <div class="action-box" onclick="location.href='/admin/loan-requests'">
+            <h4>Loan Requests</h4>
+            <p>Approve or reject pending loan applications</p>
+        </div>
+        <div class="action-box" onclick="location.href='/admin/logs'">
+            <h4>User Logs</h4>
+            <p>View system activity logs</p>
+        </div>
+
+    </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

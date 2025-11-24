@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Card Security - Nexa Bank</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #eef2fa;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: #0d1b3d;
+            color: #f7d65b;
+            padding: 18px 40px;
+            font-size: 26px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* MAIN CONTAINER */
+        .container {
+            width: 50%;
+            min-width: 350px;
+            background: white;
+            margin: 50px auto;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 26px rgba(0, 0, 0, 0.12);
+            text-align: center;
+            border-top: 6px solid #0d1b3d;
+        }
+
+        h2 {
+            color: #0d1b3d;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        p {
+            color: #334b77;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        h3 {
+            margin-top: 25px;
+            color: #1d2a55;
+            font-size: 22px;
+        }
+
+        /* BUTTONS */
+        .btn {
+            padding: 14px 25px;
+            border-radius: 10px;
+            font-size: 17px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: 0.25s ease-in-out;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-freeze {
+            background: #f7d65b;
+            color: #0d1b3d;
+        }
+
+        .btn-unfreeze {
+            background: #d9534f;
+            color: white;
+        }
+
+        /* BACK BUTTON */
+        .btn-back {
+            display: inline-block;
+            margin-top: 25px;
+            background: #0d1b3d;
+            color: white;
+            text-decoration: none !important;    /* 🔥 REMOVE UNDERLINE */
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: 0.25s ease;
+        }
+
+        .btn-back:hover {
+            background: #14306b;
+            transform: scale(1.05);
+        }
+
+        /* SUCCESS MESSAGE */
+        .success-box {
+            background: #e8f7e8;
+            padding: 15px;
+            margin: 15px auto;
+            border-left: 5px solid #0a7b0a;
+            border-radius: 10px;
+            font-weight: bold;
+            color: #0a7b0a;
+            width: 85%;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">NEXA BANK</div>
+
+<div class="container">
+
+    <h2>Card Security</h2>
+    <p>Manage your debit card safety.</p>
+
+    <!-- Flash Message -->
+    <div th:if="${success}" class="success-box">
+        <span th:text="${success}"></span>
+    </div>
+
+    <!-- Card Status -->
+    <h3 th:text="'Card Status: ' + (${account.cardFrozen} ? '❄️ Frozen' : '🟢 Active')"></h3>
+
+    <!-- Freeze / Unfreeze Button -->
+    <form th:action="@{'/toggle-card-freeze'(accountNumber=${account.accountNumber})}" method="post">
+        <button th:if="${account.cardFrozen == false}" class="btn btn-freeze">🔒 Freeze Card</button>
+        <button th:if="${account.cardFrozen == true}" class="btn btn-unfreeze">🔓 Unfreeze Card</button>
+    </form>
+
+    <!-- Back Button -->
+    <a th:href="@{'/dashboard'(accountNumber=${account.accountNumber})}" class="btn-back">
+        ← Back to Dashboard
+    </a>
+
+</div>
+
+</body>
+</html>

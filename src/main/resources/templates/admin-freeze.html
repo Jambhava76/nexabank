@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Freeze / Unfreeze Account - Nexa Bank</title>
+
+    <style>
+        body {
+            background: #0d1b3d;
+            font-family: 'Segoe UI', sans-serif;
+            color: white;
+            margin: 0;
+        }
+
+        .navbar {
+            background: #0b1533;
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.4);
+        }
+
+        .navbar h2 {
+            color: #f5c542;
+            margin: 0;
+        }
+
+        .back-btn {
+            background: #f5c542;
+            color: #0d1b3d;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .container {
+            padding: 40px;
+            max-width: 1000px;   /* narrower table */
+            margin: 0 auto;
+        }
+
+        h2 {
+            color: #f5c542;
+            font-size: 26px;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            display: block;
+            width: 100%;
+            max-width: 500px;    /* bigger search bar like before */
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #11265a;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th {
+            background: #1a2f55;
+            padding: 12px;
+            color: #f5c542;
+            text-align: left;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #284577;
+        }
+
+        .btn-freeze {
+            background: #2ecc71;
+            color: #0d1b3d;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            border: none;
+        }
+
+        .btn-freeze:hover {
+            background: #27ae60;
+        }
+
+        .btn-unfreeze {
+            background: #e74c3c;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            border: none;
+        }
+
+        .btn-unfreeze:hover {
+            background: #c0392b;
+        }
+
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .popup-box {
+            background: white;
+            color: #0d1b3d;
+            padding: 25px;
+            border-radius: 12px;
+            width: 350px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.4);
+        }
+
+        .popup-buttons button {
+            margin: 10px;
+            padding: 8px 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-ok { background: #2ecc71; color: white; }
+        .btn-cancel { background: #e74c3c; color: white; }
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <h2>Freeze / Unfreeze Account</h2>
+    <a class="back-btn" href="/admin-dashboard">← Dashboard</a>
+</div>
+
+<div class="container">
+
+    <h2>Manage Account Status</h2>
+
+    <input type="text" id="searchInput" class="search-box"
+           placeholder="Search by Name / Account Number"
+           onkeyup="filterTable()">
+
+    <table id="freezeTable">
+        <thead>
+        <tr>
+            <th>Account Number</th>
+            <th>Holder Name</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="acc : ${accounts}">
+            <td th:text="${acc.accountNumber}"></td>
+            <td th:text="${acc.holderName}"></td>
+            <td th:text="${acc.cardFrozen ? 'Frozen' : 'Active'}"></td>
+
+            <td>
+                <!-- FREEZE FORM -->
+                <form th:if="${!acc.cardFrozen}"
+                      th:id="'freezeForm_' + ${acc.accountNumber}"
+                      th:action="@{/admin/freeze}" method="post">
+
+                    <input type="hidden" name="accountNumber" th:value="${acc.accountNumber}">
+
+                    <button type="button"
+                            class="btn-freeze"
+                            th:attr="data-account-number=${acc.accountNumber}, data-action='freeze'"
+                            onclick="openPopupFromButton(this)">
+                        Freeze
+                    </button>
+                </form>
+
+                <!-- UNFREEZE FORM -->
+                <form th:if="${acc.cardFrozen}"
+                      th:id="'unfreezeForm_' + ${acc.accountNumber}"
+                      th:action="@{/admin/unfreeze}" method="post">
+
+                    <input type="hidden" name="accountNumber" th:value="${acc.accountNumber}">
+
+                    <button type="button"
+                            class="btn-unfreeze"
+                            th:attr="data-account-number=${acc.accountNumber}, data-action='unfreeze'"
+                            onclick="openPopupFromButton(this)">
+                        Unfreeze
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<!-- POPUP -->
+<div class="popup-overlay" id="confirmPopup">
+    <div class="popup-box">
+        <h3 id="popupTitle">Confirm Action</h3>
+        <p id="popupMessage"></p>
+
+        <div class="popup-buttons">
+            <button class="btn-ok" onclick="submitForm()">OK</button>
+            <button class="btn-cancel" onclick="closePopup()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let selectedAccount = null;
+    let selectedAction = null;
+
+    function openPopupFromButton(button) {
+        selectedAccount = button.getAttribute("data-account-number");
+        selectedAction = button.getAttribute("data-action");
+
+        const isFreeze = selectedAction === "freeze";
+
+        document.getElementById("popupTitle").innerText =
+            isFreeze ? "Freeze Account" : "Unfreeze Account";
+
+        document.getElementById("popupMessage").innerText =
+            isFreeze
+                ? "Are you sure you want to FREEZE this account?"
+                : "Are you sure you want to UNFREEZE this account?";
+
+        document.getElementById("confirmPopup").style.display = "flex";
+    }
+
+    function closePopup() {
+        document.getElementById("confirmPopup").style.display = "none";
+        selectedAccount = null;
+        selectedAction = null;
+    }
+
+    function submitForm() {
+        if (!selectedAccount || !selectedAction) {
+            closePopup();
+            return;
+        }
+
+        const formId = (selectedAction === "freeze" ? "freezeForm_" : "unfreezeForm_") + selectedAccount;
+        const form = document.getElementById(formId);
+
+        if (form) {
+            form.submit();
+        }
+
+        closePopup();
+    }
+
+    function filterTable() {
+        const query = document.getElementById("searchInput").value.toLowerCase();
+        const rows = document.querySelectorAll("#freezeTable tbody tr");
+
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(query) ? "" : "none";
+        });
+    }
+</script>
+
+</body>
+</html>

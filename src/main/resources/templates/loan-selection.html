@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Apply Loan — Nexa Bank</title>
+
+    <style>
+        :root{
+            --nav-blue: #0d1b3d;
+            --gold: #f7d65b;
+            --gold-hover: #ffd700;
+            --muted: #607299;
+            --card-bg: #ffffff;
+            --bg: #f5f7fb;
+        }
+
+        *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif;}
+
+        body {
+            background: var(--bg);
+            color: #0d1b3d;
+        }
+
+        /* NAVBAR (same style as other pages) */
+        .navbar {
+            background: var(--nav-blue);
+            color: var(--gold);
+            padding: 18px 40px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.25);
+        }
+        .navbar .brand { font-weight:800; font-size:26px; color:var(--gold); text-decoration:none;}
+        .nav-right a {
+            background: var(--gold);
+            color: var(--nav-blue);
+            padding: 10px 18px;
+            border-radius: 8px;
+            text-decoration:none;
+            font-weight:700;
+            transition: 0.15s ease;
+        }
+        .nav-right a:hover { background: #ffe27a; transform:scale(1.03); }
+
+        /* Page container */
+        .page {
+            width: min(1100px,94%);
+            margin: 34px auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 28px;
+            box-shadow: 0 14px 40px rgba(13,27,61,0.08);
+        }
+
+        .header {
+            display:flex;
+            gap:18px;
+            align-items:center;
+            margin-bottom:16px;
+        }
+        .logo {
+            width:56px;height:56px;border-radius:10px;
+            background: linear-gradient(135deg,#143a72,#1f66b3);
+            color:white;display:flex;align-items:center;justify-content:center;
+            font-weight:900;font-size:18px;
+            box-shadow:0 8px 20px rgba(31,102,179,0.12);
+        }
+        .title { font-size:22px; font-weight:900; color:#0d1b3d; }
+        .subtitle { color:var(--muted); font-size:14px; margin-top:6px; }
+
+        /* Grid of loan types */
+        .loan-grid {
+            margin-top:18px;
+            display:grid;
+            grid-template-columns: repeat(3,1fr);
+            gap:18px;
+        }
+        @media (max-width:1000px) { .loan-grid { grid-template-columns: repeat(2,1fr); } }
+        @media (max-width:680px) { .loan-grid { grid-template-columns: 1fr; } }
+
+        .loan-card {
+            background: linear-gradient(180deg, #ffffff, #fbfcff);
+            border-radius:12px;
+            padding:18px;
+            border:1px solid rgba(13,27,61,0.04);
+            box-shadow: 0 8px 20px rgba(13,27,61,0.04);
+            display:flex;
+            flex-direction:column;
+            gap:12px;
+        }
+        .loan-card h3 { color: #143a72; font-size:18px; margin:0; }
+        .loan-card p { color:var(--muted); font-size:14px; margin:0; flex:1;}
+        .loan-card .apply {
+            margin-top:8px;
+            align-self:flex-start;
+            text-decoration:none;
+            background:var(--gold);
+            color:var(--nav-blue);
+            padding:10px 14px;
+            border-radius:8px;
+            font-weight:700;
+        }
+        .loan-card .apply:hover { background:var(--gold-hover); transform:scale(1.03); }
+
+        /* extra info row */
+        .info-row { margin-top:20px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+        .note { color:var(--muted); font-size:13px; }
+
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <a class="brand" th:href="@{'/dashboard'(accountNumber=${accountNumber})}">NEXA BANK</a>
+
+    <div class="nav-right">
+        <!-- Back to dashboard -->
+        <a th:href="@{'/dashboard'(accountNumber=${accountNumber})}">← Dashboard</a>
+    </div>
+</div>
+
+<div class="page">
+    <div class="card">
+        <div class="header">
+            <!-- optional local NB badge, replace src if you have an image -->
+            <div class="logo" aria-hidden="true">NB</div>
+            <div>
+                <div class="title">Apply for a Loan</div>
+                <div class="subtitle">Choose a loan type to begin the application process.</div>
+            </div>
+        </div>
+
+        <!-- Loan types grid -->
+        <div class="loan-grid">
+
+            <!-- Personal Loan -->
+            <div class="loan-card">
+                <h3>Personal Loan</h3>
+                <p>Quick, unsecure loan for personal needs: medical, wedding, travel. Tenure 1–5 years.</p>
+                <a th:href="@{'/loan/apply-form'(type='Personal', accountNumber=${accountNumber})}" class="apply">Apply</a>
+            </div>
+
+
+            <!-- Education Loan -->
+            <div class="loan-card">
+                <h3>Education Loan</h3>
+                <p>For higher studies (India/abroad). Tenure 5–15 years. Moratorium options available.</p>
+                <a th:href="@{'/loan/apply-form'(type='Education', accountNumber=${accountNumber})}" class="apply">Apply</a>
+            </div>
+
+
+
+            <!-- Business Loan -->
+            <div class="loan-card">
+                <h3>Business Loan</h3>
+                <p>Startup/MSME capital or expansion finance. Secured/unsecured options available.</p>
+                <a th:href="@{'/loan/apply-form'(type='Business', accountNumber=${accountNumber})}" class="apply">Apply</a>
+            </div>
+
+            <!-- More loan types (you can add more cards here) -->
+        </div>
+
+        <div class="info-row">
+            <div class="note">After clicking Apply you will fill a loan form with required documents. We’ll show EMI estimates and expected interest rates next.</div>
+            <div><small style="color:var(--muted)">Account: <span th:text="${accountNumber}"></span></small></div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
